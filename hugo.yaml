@@ -27,7 +27,7 @@ params:
   description: "HanYayaya 的个人博客"
   profile:
     name: "HanYayaya"
-    avatar: "/images/avatar.svg"
+    avatar: "/images/avatar.jpg"
     signature: "记录技术、生活与思考"
   links:
     - title: "全部文章"
