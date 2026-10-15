@@ -1,0 +1,4 @@
+{{ define "main" }}
+  {{ $heading := printf "标签：%s" .Title }}
+  {{ partial "home-dashboard.html" (dict "context" . "posts" .Pages "heading" $heading) }}
+{{ end }}

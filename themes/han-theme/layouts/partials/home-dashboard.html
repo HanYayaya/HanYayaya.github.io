@@ -1,0 +1,56 @@
+{{ $context := .context }}
+{{ $posts := .posts }}
+{{ $heading := .heading | default "" }}
+{{ $paginator := $context.Paginate $posts.ByDate.Reverse 2 }}
+
+<div class="home-dashboard">
+  <aside class="home-sidebar home-sidebar-left" aria-label="个人资料与文章分类">
+    <section class="profile-card card">
+      <img
+        class="profile-avatar"
+        src="{{ site.Params.profile.avatar | relURL }}"
+        alt="{{ site.Params.profile.name }} 的头像"
+        width="96"
+        height="96"
+      >
+      <h1>{{ site.Params.profile.name }}</h1>
+      <p>{{ site.Params.profile.signature }}</p>
+    </section>
+
+    <section class="category-card card">
+      <h2 class="panel-title">分类</h2>
+      <div class="category-tree">
+        {{ partial "category-tree.html" (dict "context" $context "limit" 6) }}
+      </div>
+    </section>
+  </aside>
+
+  <section class="home-feed" aria-label="文章列表">
+    {{ with $heading }}
+      <header class="home-feed-heading">
+        <h1>{{ . }}</h1>
+      </header>
+    {{ end }}
+    <div class="home-post-list">
+      {{ range $paginator.Pages }}
+        {{ partial "home-post-card.html" . }}
+      {{ else }}
+        <div class="empty-card card">暂时还没有文章。</div>
+      {{ end }}
+    </div>
+    {{ partial "home-pagination.html" $paginator }}
+  </section>
+
+  <aside class="home-sidebar home-sidebar-right" aria-label="文章标签">
+    <section class="tag-cloud-card card">
+      <h2 class="panel-title">标签</h2>
+      <div class="tag-cloud">
+        {{ range site.Taxonomies.tags.ByCount }}
+          <a href="{{ .Page.RelPermalink }}"{{ if eq .Page.RelPermalink $context.RelPermalink }} class="is-current" aria-current="page"{{ end }}>{{ .Page.LinkTitle }}</a>
+        {{ else }}
+          <p class="empty-state">发布文章后，标签会自动显示在这里。</p>
+        {{ end }}
+      </div>
+    </section>
+  </aside>
+</div>

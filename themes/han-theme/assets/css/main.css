@@ -61,15 +61,6 @@ a:hover {
   font-weight: 700;
 }
 
-.header-inner nav {
-  display: flex;
-  gap: 18px;
-}
-
-.header-inner nav a {
-  color: var(--muted);
-}
-
 .site-main {
   width: min(calc(100% - 32px), var(--max-width));
   min-height: calc(100vh - 150px);
@@ -82,7 +73,7 @@ a:hover {
   background: var(--surface);
 }
 
-.home-page .site-footer {
+.dashboard-page .site-footer {
   display: none;
 }
 
@@ -235,6 +226,17 @@ a:hover {
   min-height: 0;
   flex-direction: column;
   gap: 12px;
+}
+
+.home-feed-heading {
+  flex: 0 0 auto;
+  padding: 0 2px;
+}
+
+.home-feed-heading h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
 }
 
 .home-post-list {
@@ -418,6 +420,11 @@ a:hover {
 .tag-cloud a:hover {
   background: rgba(255, 255, 255, 0.18);
   text-decoration: none;
+}
+
+.tag-cloud a.is-current {
+  color: var(--text);
+  background: rgba(144, 202, 249, 0.24);
 }
 
 .empty-state {
@@ -682,9 +689,6 @@ summary {
   }
 
   .header-inner {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 4px;
     padding-block: 10px;
   }
 
@@ -712,7 +716,7 @@ summary {
 }
 
 @media (min-width: 1024px) {
-  body.home-page {
+  body.dashboard-page {
     display: flex;
     height: 100dvh;
     min-height: 560px;
@@ -720,15 +724,15 @@ summary {
     overflow: hidden;
   }
 
-  .home-page .site-header {
+  .dashboard-page .site-header {
     flex: 0 0 auto;
   }
 
-  .home-page .header-inner {
+  .dashboard-page .header-inner {
     max-width: var(--dashboard-width);
   }
 
-  .home-page .site-main {
+  .dashboard-page .site-main {
     width: min(calc(100% - 32px), var(--dashboard-width));
     min-height: 0;
     flex: 1 1 auto;
