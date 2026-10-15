@@ -349,35 +349,43 @@ a:hover {
   align-items: center;
   flex: 0 0 48px;
   justify-content: center;
-  gap: 14px;
-  padding: 5px 10px;
+  gap: 4px;
+  padding: 5px 4px;
 }
 
-.page-button {
+.pagination-control,
+.page-number {
   display: grid;
   width: 34px;
   height: 34px;
-  border-radius: 4px;
+  border-radius: 50%;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
-  font-size: 1.1rem;
+  font-size: 0.86rem;
+  line-height: 1;
   place-items: center;
 }
 
-.page-button:hover {
-  background: rgba(255, 255, 255, 0.14);
+.pagination-control {
+  color: var(--muted);
+  font-size: 1.25rem;
+}
+
+.pagination-control:hover,
+.page-number:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
   text-decoration: none;
 }
 
-.page-button.is-disabled {
-  opacity: 0.28;
+.pagination-control.is-disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
-.page-indicator {
-  min-width: 52px;
-  color: var(--muted);
-  font-size: 0.82rem;
-  text-align: center;
+.page-number.is-current {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.17);
+  font-weight: 500;
 }
 
 .quick-links-card {

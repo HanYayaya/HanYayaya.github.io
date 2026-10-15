@@ -1,15 +1,42 @@
-<nav class="home-pagination card" aria-label="首页文章翻页">
+{{ $current := .PageNumber }}
+{{ $total := .TotalPages }}
+{{ $start := sub $current 3 }}
+{{ if lt $start 1 }}
+  {{ $start = 1 }}
+{{ end }}
+{{ $end := add $start 6 }}
+{{ if gt $end $total }}
+  {{ $end = $total }}
+  {{ $start = sub $end 6 }}
+  {{ if lt $start 1 }}
+    {{ $start = 1 }}
+  {{ end }}
+{{ end }}
+
+<nav class="home-pagination" aria-label="首页文章翻页">
   {{ if .HasPrev }}
-    <a class="page-button" href="{{ .Prev.URL }}" aria-label="上一页">←</a>
+    <a class="pagination-control" href="{{ .First.URL }}" aria-label="第一页" title="第一页"><span aria-hidden="true">|‹</span></a>
+    <a class="pagination-control" href="{{ .Prev.URL }}" aria-label="上一页" title="上一页"><span aria-hidden="true">‹</span></a>
   {{ else }}
-    <span class="page-button is-disabled" aria-hidden="true">←</span>
+    <span class="pagination-control is-disabled" aria-hidden="true">|‹</span>
+    <span class="pagination-control is-disabled" aria-hidden="true">‹</span>
   {{ end }}
 
-  <span class="page-indicator">{{ .PageNumber }} / {{ .TotalPages }}</span>
+  {{ range .Pagers }}
+    {{ if and (ge .PageNumber $start) (le .PageNumber $end) }}
+      {{ if eq .PageNumber $current }}
+        <span class="page-number is-current" aria-current="page">{{ .PageNumber }}</span>
+      {{ else }}
+        <a class="page-number" href="{{ .URL }}" aria-label="第 {{ .PageNumber }} 页">{{ .PageNumber }}</a>
+      {{ end }}
+    {{ end }}
+  {{ end }}
 
   {{ if .HasNext }}
-    <a class="page-button" href="{{ .Next.URL }}" aria-label="下一页">→</a>
+    <a class="pagination-control" href="{{ .Next.URL }}" aria-label="下一页" title="下一页"><span aria-hidden="true">›</span></a>
+    <a class="pagination-control" href="{{ .Last.URL }}" aria-label="最后一页" title="最后一页"><span aria-hidden="true">›|</span></a>
   {{ else }}
-    <span class="page-button is-disabled" aria-hidden="true">→</span>
+    <span class="pagination-control is-disabled" aria-hidden="true">›</span>
+    <span class="pagination-control is-disabled" aria-hidden="true">›|</span>
   {{ end }}
 </nav>
