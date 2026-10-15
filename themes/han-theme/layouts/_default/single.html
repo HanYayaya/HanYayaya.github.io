@@ -1,13 +1,8 @@
 {{ define "main" }}
   {{ $hasToc := and (.Params.toc | default true) (ne .TableOfContents `<nav id="TableOfContents"></nav>`) }}
 
-  <div class="article-layout">
-    <aside class="article-side-card article-index-card card" aria-label="文章目录">
-      <h2 class="panel-title">文章目录</h2>
-      <div class="category-tree">
-        {{ partial "category-tree.html" (dict "context" . "limit" 0) }}
-      </div>
-    </aside>
+  <div class="home-dashboard article-dashboard">
+    {{ partial "dashboard-left-sidebar.html" (dict "context" . "limit" 0) }}
 
     <article class="article card">
       <header class="article-header">
@@ -23,15 +18,18 @@
       </div>
     </article>
 
-    <aside class="article-side-card article-toc-card card" aria-label="本页目录">
-      <h2 class="panel-title">本页目录</h2>
-      <div class="article-toc">
-        {{ if $hasToc }}
-          {{ .TableOfContents }}
-        {{ else }}
-          <p class="empty-state">本文暂无章节目录。</p>
-        {{ end }}
-      </div>
+    <aside class="home-sidebar home-sidebar-right article-sidebar-right" aria-label="本页目录与文章标签">
+      <section class="article-toc-card card">
+        <h2 class="panel-title">本页目录</h2>
+        <div class="article-toc">
+          {{ if $hasToc }}
+            {{ .TableOfContents }}
+          {{ else }}
+            <p class="empty-state">本文暂无章节目录。</p>
+          {{ end }}
+        </div>
+      </section>
+      {{ partial "tag-cloud-card.html" (dict "context" .) }}
     </aside>
   </div>
 {{ end }}

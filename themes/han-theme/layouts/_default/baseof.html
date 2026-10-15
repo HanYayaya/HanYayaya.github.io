@@ -4,7 +4,7 @@
     {{ partial "head.html" . }}
   </head>
   {{ $isTagTerm := and (eq .Kind `term`) (eq .Data.Singular `tag`) }}
-  <body{{ if .IsHome }} class="home-page dashboard-page"{{ else if $isTagTerm }} class="tag-page dashboard-page"{{ else if and .IsPage (eq .Section `posts`) }} class="article-page"{{ end }}>
+  <body{{ if .IsHome }} class="home-page dashboard-page"{{ else if $isTagTerm }} class="tag-page dashboard-page"{{ else if and .IsPage (eq .Section `posts`) }} class="article-page dashboard-page"{{ end }}>
     {{ partial "header.html" . }}
     <main class="site-main">
       {{ block "main" . }}{{ end }}

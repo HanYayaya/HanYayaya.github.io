@@ -1,0 +1,23 @@
+{{ $context := .context }}
+{{ $limit := .limit | default 0 }}
+
+<aside class="home-sidebar home-sidebar-left" aria-label="个人资料与文章分类">
+  <section class="profile-card card">
+    <img
+      class="profile-avatar"
+      src="{{ site.Params.profile.avatar | relURL }}"
+      alt="{{ site.Params.profile.name }} 的头像"
+      width="96"
+      height="96"
+    >
+    <h1>{{ site.Params.profile.name }}</h1>
+    <p>{{ site.Params.profile.signature }}</p>
+  </section>
+
+  <section class="category-card card">
+    <h2 class="panel-title">分类</h2>
+    <div class="category-tree">
+      {{ partial "category-tree.html" (dict "context" $context "limit" $limit) }}
+    </div>
+  </section>
+</aside>

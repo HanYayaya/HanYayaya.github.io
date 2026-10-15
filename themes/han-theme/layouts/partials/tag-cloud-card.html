@@ -1,0 +1,12 @@
+{{ $context := .context }}
+
+<section class="tag-cloud-card card">
+  <h2 class="panel-title">标签</h2>
+  <div class="tag-cloud">
+    {{ range site.Taxonomies.tags.ByCount }}
+      <a href="{{ .Page.RelPermalink }}"{{ if eq .Page.RelPermalink $context.RelPermalink }} class="is-current" aria-current="page"{{ end }}>{{ .Page.LinkTitle }}</a>
+    {{ else }}
+      <p class="empty-state">发布文章后，标签会自动显示在这里。</p>
+    {{ end }}
+  </div>
+</section>
