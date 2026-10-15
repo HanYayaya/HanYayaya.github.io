@@ -49,19 +49,7 @@
       {{ partial "home-pagination.html" $paginator }}
     </section>
 
-    <aside class="home-sidebar home-sidebar-right" aria-label="快捷链接与标签">
-      <section class="quick-links-card card">
-        <h2 class="panel-title">快捷链接</h2>
-        <nav class="quick-links" aria-label="快捷链接">
-          {{ range site.Params.links }}
-            <a href="{{ .url | relURL }}">
-              <span aria-hidden="true">↗</span>
-              <span>{{ .title }}</span>
-            </a>
-          {{ end }}
-        </nav>
-      </section>
-
+    <aside class="home-sidebar home-sidebar-right" aria-label="文章标签">
       <section class="tag-cloud-card card">
         <h2 class="panel-title">标签</h2>
         <div class="tag-cloud">
