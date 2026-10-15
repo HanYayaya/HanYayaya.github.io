@@ -1,23 +1,12 @@
 {{ define "main" }}
-  {{ $currentPage := . }}
-  {{ $posts := where site.RegularPages "Section" "posts" }}
   {{ $hasToc := and (.Params.toc | default true) (ne .TableOfContents `<nav id="TableOfContents"></nav>`) }}
 
   <div class="article-layout">
     <aside class="article-side-card article-index-card card" aria-label="文章目录">
       <h2 class="panel-title">文章目录</h2>
-      <nav class="article-index">
-        <ul>
-          {{ range $posts.ByDate.Reverse }}
-            <li>
-              <a href="{{ .RelPermalink }}"{{ if eq .RelPermalink $currentPage.RelPermalink }} class="is-current" aria-current="page"{{ end }}>
-                <span>{{ .LinkTitle }}</span>
-                <time datetime="{{ .Date.Format `2006-01-02` }}">{{ .Date.Format "2006.01.02" }}</time>
-              </a>
-            </li>
-          {{ end }}
-        </ul>
-      </nav>
+      <div class="category-tree">
+        {{ partial "category-tree.html" (dict "context" . "limit" 0) }}
+      </div>
     </aside>
 
     <article class="article card">

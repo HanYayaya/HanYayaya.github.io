@@ -19,21 +19,7 @@
       <section class="category-card card">
         <h2 class="panel-title">分类</h2>
         <div class="category-tree">
-          {{ range site.Taxonomies.categories.Alphabetical }}
-            <details class="category-node">
-              <summary>
-                <span>{{ .Page.LinkTitle }}</span>
-                <span class="term-count">{{ .Count }}</span>
-              </summary>
-              <ul>
-                {{ range first 6 .Pages.ByDate.Reverse }}
-                  <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
-                {{ end }}
-              </ul>
-            </details>
-          {{ else }}
-            <p class="empty-state">发布文章后，分类会自动显示在这里。</p>
-          {{ end }}
+          {{ partial "category-tree.html" (dict "context" . "limit" 6) }}
         </div>
       </section>
     </aside>

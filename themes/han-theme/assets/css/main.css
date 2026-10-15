@@ -224,6 +224,11 @@ a:hover {
   white-space: nowrap;
 }
 
+.category-node li a.is-current {
+  color: var(--text);
+  font-weight: 600;
+}
+
 .home-feed {
   display: flex;
   min-width: 0;
@@ -504,7 +509,7 @@ a:hover {
   top: 76px;
 }
 
-.article-index,
+.article-index-card .category-tree,
 .article-toc {
   max-height: calc(100vh - 142px);
   overflow-y: auto;
@@ -513,53 +518,10 @@ a:hover {
   scrollbar-width: thin;
 }
 
-.article-index ul,
 .article-toc ul {
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-.article-index li + li {
-  margin-top: 3px;
-}
-
-.article-index a {
-  display: block;
-  padding: 8px;
-  border-radius: 4px;
-  color: var(--muted);
-}
-
-.article-index a:hover,
-.article-index a.is-current {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
-  text-decoration: none;
-}
-
-.article-index a.is-current {
-  box-shadow: inset 3px 0 var(--accent);
-}
-
-.article-index a span,
-.article-index a time {
-  display: block;
-}
-
-.article-index a span {
-  display: -webkit-box;
-  overflow: hidden;
-  font-size: 0.82rem;
-  line-height: 1.45;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.article-index a time {
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 0.7rem;
 }
 
 .article-toc a {
