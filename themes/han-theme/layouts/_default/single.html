@@ -1,0 +1,30 @@
+{{ define "main" }}
+  <article class="article card">
+    <header class="article-header">
+      <p class="eyebrow">{{ with .CurrentSection }}{{ .Title }}{{ end }}</p>
+      <h1>{{ .Title }}</h1>
+      <div class="article-meta">
+        <time datetime="{{ .Date.Format `2006-01-02T15:04:05Z07:00` }}">{{ .Date.Format "2006年01月02日" }}</time>
+        <span>约 {{ .ReadingTime }} 分钟阅读</span>
+      </div>
+      {{ with .Params.tags }}
+        <ul class="tag-list" aria-label="文章标签">
+          {{ range . }}
+            <li><a href="{{ printf `/tags/%s/` (. | urlize) | relURL }}">{{ . }}</a></li>
+          {{ end }}
+        </ul>
+      {{ end }}
+    </header>
+
+    {{ if and (.Params.toc | default true) (ne .TableOfContents `<nav id="TableOfContents"></nav>`) }}
+      <aside class="toc card" aria-label="文章目录">
+        <h2>目录</h2>
+        {{ .TableOfContents }}
+      </aside>
+    {{ end }}
+
+    <div class="article-content">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}

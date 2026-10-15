@@ -1,0 +1,7 @@
+name = "Han Theme"
+license = "MIT"
+description = "A minimal local theme scaffold for HanYayaya.github.io"
+min_version = "0.168.0"
+
+[author]
+  name = "HanYayaya"

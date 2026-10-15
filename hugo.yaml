@@ -1,0 +1,27 @@
+baseURL: "https://hanyayaya.github.io/"
+locale: "zh-CN"
+title: "HanYayaya Blog"
+theme: "han-theme"
+enableRobotsTXT: true
+
+pagination:
+  pagerSize: 10
+
+permalinks:
+  posts: "/posts/:slug/"
+
+taxonomies:
+  category: categories
+  tag: tags
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: true
+    lineNos: true
+
+params:
+  author: "HanYayaya"
+  description: "HanYayaya 的个人博客"

@@ -1,0 +1,16 @@
+{{ define "main" }}
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+  </header>
+
+  <div class="post-list">
+    {{ range .Paginator.Pages }}
+      {{ partial "post-card.html" . }}
+    {{ else }}
+      <p>暂时还没有内容。</p>
+    {{ end }}
+  </div>
+
+  {{ template "_internal/pagination.html" . }}
+{{ end }}

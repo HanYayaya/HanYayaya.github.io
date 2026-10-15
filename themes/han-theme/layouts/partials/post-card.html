@@ -1,0 +1,10 @@
+<article class="post-card card">
+  <p class="eyebrow">{{ .Date.Format "2006年01月02日" }}</p>
+  <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+  <p>{{ .Description | default .Summary }}</p>
+  {{ with .Params.tags }}
+    <ul class="tag-list" aria-label="文章标签">
+      {{ range first 4 . }}<li>{{ . }}</li>{{ end }}
+    </ul>
+  {{ end }}
+</article>

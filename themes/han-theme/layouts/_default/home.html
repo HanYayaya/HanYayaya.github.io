@@ -1,0 +1,21 @@
+{{ define "main" }}
+  <section class="hero card">
+    <p class="eyebrow">Hugo × GitHub Pages</p>
+    <h1>{{ site.Title }}</h1>
+    <p>{{ site.Params.description }}</p>
+    <a class="button" href="{{ `/posts/` | relURL }}">查看全部文章</a>
+  </section>
+
+  <section class="section-block">
+    <div class="section-heading">
+      <h2>最新文章</h2>
+    </div>
+    <div class="post-list">
+      {{ range first 5 (where site.RegularPages "Section" "posts") }}
+        {{ partial "post-card.html" . }}
+      {{ else }}
+        <p>暂时还没有文章。</p>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}
