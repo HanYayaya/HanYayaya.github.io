@@ -2,25 +2,35 @@
 {{ with .Params.cover }}
   {{ $cover = $.Resources.GetMatch . }}
 {{ end }}
-<article class="home-post-card card">
+{{ if not $cover }}
+  {{ $images := .Resources.ByType "image" }}
+  {{ if gt (len $images) 0 }}
+    {{ $cover = index $images 0 }}
+  {{ end }}
+{{ end }}
+
+{{ $authorName := .Params.author | default site.Params.profile.name }}
+{{ $authorAvatar := .Params.authorAvatar | default site.Params.profile.avatar }}
+
+<article class="home-post-card card{{ if $cover }} has-cover{{ else }} no-cover{{ end }}">
   <a class="home-post-card-link" href="{{ .RelPermalink }}" aria-label="阅读《{{ .Title }}》">
+    <h2>{{ .Title }}</h2>
+
     {{ with $cover }}
       <div class="home-post-cover">
         <img src="{{ .RelPermalink }}" alt="" loading="eager">
       </div>
     {{ end }}
+
     <div class="home-post-content">
-      <h2>{{ .Title }}</h2>
-      <div class="home-post-meta">
-        <span>{{ .Date.Format "2006年01月02日" }}</span>
-        <span>约 {{ .ReadingTime }} 分钟</span>
+      <div class="home-post-author">
+        <img src="{{ $authorAvatar | relURL }}" alt="" width="38" height="38">
+        <div>
+          <strong>{{ $authorName }}</strong>
+          <time datetime="{{ $.Date.Format `2006-01-02T15:04:05Z07:00` }}">{{ $.Date.Format "2006年01月02日" }}</time>
+        </div>
       </div>
       <p>{{ .Description | default .Summary | plainify }}</p>
-      {{ with .Params.tags }}
-        <ul class="home-post-tags" aria-label="文章标签">
-          {{ range first 4 . }}<li>{{ . }}</li>{{ end }}
-        </ul>
-      {{ end }}
     </div>
   </a>
 </article>
