@@ -12,31 +12,61 @@
     {{ $start = 1 }}
   {{ end }}
 {{ end }}
-
-<nav class="home-pagination" aria-label="首页文章翻页">
-  {{ if .HasPrev }}
-    <a class="pagination-control" href="{{ .First.URL }}" aria-label="第一页" title="第一页"><span aria-hidden="true">|‹</span></a>
-    <a class="pagination-control" href="{{ .Prev.URL }}" aria-label="上一页" title="上一页"><span aria-hidden="true">‹</span></a>
-  {{ else }}
-    <span class="pagination-control is-disabled" aria-hidden="true">|‹</span>
-    <span class="pagination-control is-disabled" aria-hidden="true">‹</span>
+{{ $mobileStart := sub $current 1 }}
+{{ if lt $mobileStart 1 }}
+  {{ $mobileStart = 1 }}
+{{ end }}
+{{ $mobileEnd := add $mobileStart 2 }}
+{{ if gt $mobileEnd $total }}
+  {{ $mobileEnd = $total }}
+  {{ $mobileStart = sub $mobileEnd 2 }}
+  {{ if lt $mobileStart 1 }}
+    {{ $mobileStart = 1 }}
   {{ end }}
+{{ end }}
 
-  {{ range .Pagers }}
-    {{ if and (ge .PageNumber $start) (le .PageNumber $end) }}
-      {{ if eq .PageNumber $current }}
-        <span class="page-number is-current" aria-current="page">{{ .PageNumber }}</span>
-      {{ else }}
-        <a class="page-number" href="{{ .URL }}" aria-label="第 {{ .PageNumber }} 页">{{ .PageNumber }}</a>
+{{ if gt $total 1 }}
+  <nav class="home-pagination" aria-label="首页文章翻页">
+    {{ if .HasPrev }}
+      <a class="pagination-control" href="{{ .First.URL }}" aria-label="第一页" title="第一页">
+        <svg class="pagination-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"></path></svg>
+      </a>
+      <a class="pagination-control" href="{{ .Prev.URL }}" aria-label="上一页" title="上一页">
+        <svg class="pagination-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
+      </a>
+    {{ else }}
+      <span class="pagination-control is-disabled" aria-hidden="true">
+        <svg class="pagination-icon" viewBox="0 0 24 24"><path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"></path></svg>
+      </span>
+      <span class="pagination-control is-disabled" aria-hidden="true">
+        <svg class="pagination-icon" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
+      </span>
+    {{ end }}
+
+    {{ range .Pagers }}
+      {{ if and (ge .PageNumber $start) (le .PageNumber $end) }}
+        {{ if eq .PageNumber $current }}
+          <span class="page-number is-current" aria-current="page">{{ .PageNumber }}</span>
+        {{ else }}
+          <a class="page-number{{ if or (lt .PageNumber $mobileStart) (gt .PageNumber $mobileEnd) }} is-mobile-hidden{{ end }}" href="{{ .URL }}" aria-label="第 {{ .PageNumber }} 页">{{ .PageNumber }}</a>
+        {{ end }}
       {{ end }}
     {{ end }}
-  {{ end }}
 
-  {{ if .HasNext }}
-    <a class="pagination-control" href="{{ .Next.URL }}" aria-label="下一页" title="下一页"><span aria-hidden="true">›</span></a>
-    <a class="pagination-control" href="{{ .Last.URL }}" aria-label="最后一页" title="最后一页"><span aria-hidden="true">›|</span></a>
-  {{ else }}
-    <span class="pagination-control is-disabled" aria-hidden="true">›</span>
-    <span class="pagination-control is-disabled" aria-hidden="true">›|</span>
-  {{ end }}
-</nav>
+    {{ if .HasNext }}
+      <a class="pagination-control" href="{{ .Next.URL }}" aria-label="下一页" title="下一页">
+        <svg class="pagination-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+      </a>
+      <a class="pagination-control" href="{{ .Last.URL }}" aria-label="最后一页" title="最后一页">
+        <svg class="pagination-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"></path></svg>
+      </a>
+    {{ else }}
+      <span class="pagination-control is-disabled" aria-hidden="true">
+        <svg class="pagination-icon" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+      </span>
+      <span class="pagination-control is-disabled" aria-hidden="true">
+        <svg class="pagination-icon" viewBox="0 0 24 24"><path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"></path></svg>
+      </span>
+    {{ end }}
+  </nav>
+{{ end }}

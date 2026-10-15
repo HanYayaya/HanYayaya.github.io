@@ -349,25 +349,26 @@ a:hover {
   align-items: center;
   flex: 0 0 48px;
   justify-content: center;
-  gap: 4px;
-  padding: 5px 4px;
+  padding: 8px 0;
 }
 
 .pagination-control,
 .page-number {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  width: 32px;
+  height: 32px;
+  margin: 0 3px;
+  padding: 0 6px;
+  border-radius: 16px;
   color: var(--text);
-  font-size: 0.86rem;
-  line-height: 1;
-  place-items: center;
-}
-
-.pagination-control {
-  color: var(--muted);
-  font-size: 1.25rem;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.43;
+  transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1), background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pagination-control:hover,
@@ -378,14 +379,21 @@ a:hover {
 }
 
 .pagination-control.is-disabled {
-  opacity: 0.3;
+  opacity: 0.38;
   cursor: default;
 }
 
 .page-number.is-current {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.17);
-  font-weight: 500;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.pagination-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0 -8px;
+  fill: currentColor;
 }
 
 .quick-links-card {
@@ -643,6 +651,10 @@ summary {
 }
 
 @media (max-width: 640px) {
+  .home-pagination .is-mobile-hidden {
+    display: none;
+  }
+
   .header-inner {
     align-items: flex-start;
     flex-direction: column;
