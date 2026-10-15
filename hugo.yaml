@@ -25,3 +25,16 @@ markup:
 params:
   author: "HanYayaya"
   description: "HanYayaya 的个人博客"
+  profile:
+    name: "HanYayaya"
+    avatar: "/images/avatar.svg"
+    signature: "记录技术、生活与思考"
+  links:
+    - title: "全部文章"
+      url: "/posts/"
+    - title: "文章分类"
+      url: "/categories/"
+    - title: "标签索引"
+      url: "/tags/"
+    - title: "RSS 订阅"
+      url: "/index.xml"

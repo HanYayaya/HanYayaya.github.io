@@ -1,21 +1,77 @@
 {{ define "main" }}
-  <section class="hero card">
-    <p class="eyebrow">Hugo × GitHub Pages</p>
-    <h1>{{ site.Title }}</h1>
-    <p>{{ site.Params.description }}</p>
-    <a class="button" href="{{ `/posts/` | relURL }}">查看全部文章</a>
-  </section>
+  {{ $posts := where site.RegularPages "Section" "posts" }}
+  {{ $paginator := .Paginate $posts.ByDate.Reverse 2 }}
 
-  <section class="section-block">
-    <div class="section-heading">
-      <h2>最新文章</h2>
-    </div>
-    <div class="post-list">
-      {{ range first 5 (where site.RegularPages "Section" "posts") }}
-        {{ partial "post-card.html" . }}
-      {{ else }}
-        <p>暂时还没有文章。</p>
-      {{ end }}
-    </div>
-  </section>
+  <div class="home-dashboard">
+    <aside class="home-sidebar home-sidebar-left" aria-label="个人资料与文章分类">
+      <section class="profile-card card">
+        <img
+          class="profile-avatar"
+          src="{{ site.Params.profile.avatar | relURL }}"
+          alt="{{ site.Params.profile.name }} 的头像"
+          width="96"
+          height="96"
+        >
+        <h1>{{ site.Params.profile.name }}</h1>
+        <p>{{ site.Params.profile.signature }}</p>
+      </section>
+
+      <section class="category-card card">
+        <h2 class="panel-title">分类</h2>
+        <div class="category-tree">
+          {{ range site.Taxonomies.categories.Alphabetical }}
+            <details class="category-node">
+              <summary>
+                <span>{{ .Page.LinkTitle }}</span>
+                <span class="term-count">{{ .Count }}</span>
+              </summary>
+              <ul>
+                {{ range first 6 .Pages.ByDate.Reverse }}
+                  <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+                {{ end }}
+              </ul>
+            </details>
+          {{ else }}
+            <p class="empty-state">发布文章后，分类会自动显示在这里。</p>
+          {{ end }}
+        </div>
+      </section>
+    </aside>
+
+    <section class="home-feed" aria-label="最新文章">
+      <div class="home-post-list">
+        {{ range $paginator.Pages }}
+          {{ partial "home-post-card.html" . }}
+        {{ else }}
+          <div class="empty-card card">暂时还没有文章。</div>
+        {{ end }}
+      </div>
+      {{ partial "home-pagination.html" $paginator }}
+    </section>
+
+    <aside class="home-sidebar home-sidebar-right" aria-label="快捷链接与标签">
+      <section class="quick-links-card card">
+        <h2 class="panel-title">快捷链接</h2>
+        <nav class="quick-links" aria-label="快捷链接">
+          {{ range site.Params.links }}
+            <a href="{{ .url | relURL }}">
+              <span aria-hidden="true">↗</span>
+              <span>{{ .title }}</span>
+            </a>
+          {{ end }}
+        </nav>
+      </section>
+
+      <section class="tag-cloud-card card">
+        <h2 class="panel-title">标签</h2>
+        <div class="tag-cloud">
+          {{ range site.Taxonomies.tags.ByCount }}
+            <a href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }}</a>
+          {{ else }}
+            <p class="empty-state">发布文章后，标签会自动显示在这里。</p>
+          {{ end }}
+        </div>
+      </section>
+    </aside>
+  </div>
 {{ end }}
