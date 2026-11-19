@@ -1,4 +1,8 @@
+# Hugo 构建产物与资源缓存
 /public/
 /resources/_gen/
 .hugo_build.lock
 .obsidian/
+
+# 本地 Hugo 程序、下载包、缓存、预览构建、截图、日志和进程记录
+/.tools/

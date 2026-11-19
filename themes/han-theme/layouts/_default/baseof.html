@@ -10,5 +10,9 @@
       {{ block "main" . }}{{ end }}
     </main>
     {{ partial "footer.html" . }}
+    {{ if .IsPage }}
+      {{ $codeScript := resources.Get "js/code-blocks.js" | minify | fingerprint }}
+      <script src="{{ $codeScript.RelPermalink }}" integrity="{{ $codeScript.Data.Integrity }}" defer></script>
+    {{ end }}
   </body>
 </html>

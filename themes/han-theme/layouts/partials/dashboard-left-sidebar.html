@@ -1,5 +1,4 @@
 {{ $context := .context }}
-{{ $limit := .limit | default 0 }}
 
 <aside class="home-sidebar home-sidebar-left" aria-label="个人资料与文章分类">
   <section class="profile-card card">
@@ -17,7 +16,7 @@
   <section class="category-card card">
     <h2 class="panel-title">分类</h2>
     <div class="category-tree">
-      {{ partial "category-tree.html" (dict "context" $context "limit" $limit) }}
+      {{ partial "category-tree.html" (dict "context" $context) }}
     </div>
   </section>
 </aside>

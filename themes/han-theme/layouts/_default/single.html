@@ -2,7 +2,7 @@
   {{ $hasToc := and (.Params.toc | default true) (ne .TableOfContents `<nav id="TableOfContents"></nav>`) }}
 
   <div class="home-dashboard article-dashboard">
-    {{ partial "dashboard-left-sidebar.html" (dict "context" . "limit" 0) }}
+    {{ partial "dashboard-left-sidebar.html" (dict "context" .) }}
 
     <article class="article card">
       <header class="article-header">
@@ -16,9 +16,10 @@
       <div class="article-content">
         {{ .Content }}
       </div>
+      {{ partial "article-series-nav.html" . }}
     </article>
 
-    <aside class="home-sidebar home-sidebar-right article-sidebar-right" aria-label="本页目录与文章标签">
+    <aside class="home-sidebar article-sidebar-right" aria-label="本页目录">
       <section class="article-toc-card card">
         <h2 class="panel-title">本页目录</h2>
         <div class="article-toc">
@@ -29,7 +30,6 @@
           {{ end }}
         </div>
       </section>
-      {{ partial "tag-cloud-card.html" (dict "context" .) }}
     </aside>
   </div>
 {{ end }}

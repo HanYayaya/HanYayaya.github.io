@@ -1,0 +1,28 @@
+{{ $currentPage := . }}
+{{ with .Params.series }}
+  {{ $pages := where (where site.RegularPages "Section" $currentPage.Section) "Params.series" "intersect" . }}
+  {{ $pages = sort $pages "Params.series_order" "asc" }}
+  {{ $previous := false }}
+  {{ $next := false }}
+  {{ range $index, $page := $pages }}
+    {{ if eq $page.RelPermalink $currentPage.RelPermalink }}
+      {{ if gt $index 0 }}
+        {{ $previous = index $pages (sub $index 1) }}
+      {{ end }}
+      {{ if lt $index (sub (len $pages) 1) }}
+        {{ $next = index $pages (add $index 1) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{ if or $previous $next }}
+    <nav class="article-pagination" aria-label="系列文章导航">
+      {{ with $previous }}
+        <a class="article-pagination-previous" href="{{ .RelPermalink }}" rel="prev" title="{{ .LinkTitle }}"><span class="article-pagination-label">上一篇：</span>{{ .LinkTitle }}</a>
+      {{ end }}
+      {{ with $next }}
+        <a class="article-pagination-next" href="{{ .RelPermalink }}" rel="next" title="{{ .LinkTitle }}"><span class="article-pagination-label">下一篇：</span>{{ .LinkTitle }}</a>
+      {{ end }}
+    </nav>
+  {{ end }}
+{{ end }}

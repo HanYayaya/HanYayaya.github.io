@@ -1,0 +1,55 @@
+{{ $currentPage := .context }}
+{{ $depth := .depth }}
+{{ $groups := dict }}
+{{ range .entries }}
+  {{ $name := index .path $depth }}
+  {{ $entries := index $groups $name | default slice }}
+  {{ $groups = merge $groups (dict $name ($entries | append .)) }}
+{{ end }}
+
+{{ range $name, $entries := $groups }}
+  {{ $pages := slice }}
+  {{ $directPages := slice }}
+  {{ $children := slice }}
+  {{ $isCurrentCategory := false }}
+  {{ $isOrderedSeries := true }}
+  {{ range $entries }}
+    {{ $pages = $pages | append .page }}
+    {{ if eq (len .path) (add $depth 1) }}
+      {{ $directPages = $directPages | append .page }}
+      {{ if not .page.Params.series_order }}
+        {{ $isOrderedSeries = false }}
+      {{ end }}
+    {{ else }}
+      {{ $children = $children | append . }}
+    {{ end }}
+    {{ if eq .page.RelPermalink $currentPage.RelPermalink }}
+      {{ $isCurrentCategory = true }}
+    {{ end }}
+  {{ end }}
+
+  <details class="category-node"{{ if $isCurrentCategory }} open{{ end }}>
+    <summary>
+      <span>{{ $name }}</span>
+      <span class="term-count">{{ len (uniq $pages) }}</span>
+    </summary>
+    {{ with $children }}
+      <div class="category-children">
+        {{ partial "category-tree-branch.html" (dict "context" $currentPage "entries" . "depth" (add $depth 1)) }}
+      </div>
+    {{ end }}
+    {{ with $directPages }}
+      {{ $sortedPages := sort (uniq .) "Date" "desc" }}
+      {{ if $isOrderedSeries }}
+        {{ $sortedPages = sort $sortedPages "Params.series_order" "asc" }}
+      {{ end }}
+      <ul>
+        {{ range $sortedPages }}
+          <li>
+            <a href="{{ .RelPermalink }}" title="{{ .LinkTitle }}"{{ if eq .RelPermalink $currentPage.RelPermalink }} class="is-current" aria-current="page"{{ end }}>{{ .LinkTitle }}</a>
+          </li>
+        {{ end }}
+      </ul>
+    {{ end }}
+  </details>
+{{ end }}

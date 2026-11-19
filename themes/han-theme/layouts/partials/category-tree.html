@@ -1,31 +1,13 @@
-{{ $currentPage := .context }}
-{{ $limit := .limit | default 0 }}
-
-{{ range site.Taxonomies.categories.Alphabetical }}
-  {{ $isCurrentCategory := false }}
-  {{ range .Pages }}
-    {{ if eq .RelPermalink $currentPage.RelPermalink }}
-      {{ $isCurrentCategory = true }}
-    {{ end }}
+{{ $entries := slice }}
+{{ range site.RegularPages }}
+  {{ $page := . }}
+  {{ range .Params.categories }}
+    {{ $entries = $entries | append (dict "path" (split . "/") "page" $page) }}
   {{ end }}
+{{ end }}
 
-  <details class="category-node"{{ if $isCurrentCategory }} open{{ end }}>
-    <summary>
-      <span>{{ .Page.LinkTitle }}</span>
-      <span class="term-count">{{ .Count }}</span>
-    </summary>
-    <ul>
-      {{ $pages := .Pages.ByDate.Reverse }}
-      {{ if gt $limit 0 }}
-        {{ $pages = first $limit $pages }}
-      {{ end }}
-      {{ range $pages }}
-        <li>
-          <a href="{{ .RelPermalink }}"{{ if eq .RelPermalink $currentPage.RelPermalink }} class="is-current" aria-current="page"{{ end }}>{{ .LinkTitle }}</a>
-        </li>
-      {{ end }}
-    </ul>
-  </details>
+{{ if $entries }}
+  {{ partial "category-tree-branch.html" (dict "context" .context "entries" $entries "depth" 0) }}
 {{ else }}
   <p class="empty-state">发布文章后，分类会自动显示在这里。</p>
 {{ end }}

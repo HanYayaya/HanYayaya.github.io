@@ -1,6 +1,6 @@
 baseURL: "https://hanyayaya.github.io/"
 locale: "zh-CN"
-title: "HanYayaya Blog"
+title: "橘子味硬糖's Blog"
 theme: "han-theme"
 enableRobotsTXT: true
 
@@ -19,22 +19,22 @@ markup:
     renderer:
       unsafe: true
   highlight:
-    noClasses: true
+    noClasses: false
+    style: github-dark
     lineNos: true
+    lineNumbersInTable: false
 
 params:
-  author: "HanYayaya"
-  description: "HanYayaya 的个人博客"
+  author: "橘子味硬糖"
+  description: "橘子味硬糖 的个人博客"
   profile:
-    name: "HanYayaya"
+    name: "橘子味硬糖"
     avatar: "/images/avatar.jpg"
-    signature: "记录技术、生活与思考"
+    signature: "记录技术与生活"
   links:
     - title: "全部文章"
       url: "/posts/"
     - title: "文章分类"
       url: "/categories/"
-    - title: "标签索引"
-      url: "/tags/"
     - title: "RSS 订阅"
       url: "/index.xml"

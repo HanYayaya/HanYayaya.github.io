@@ -1,10 +1,9 @@
 {{ $context := .context }}
-{{ $posts := .posts }}
+{{ $posts := .posts.ByDate.Reverse }}
 {{ $heading := .heading | default "" }}
-{{ $paginator := $context.Paginate $posts.ByDate.Reverse 2 }}
 
-<div class="home-dashboard">
-  {{ partial "dashboard-left-sidebar.html" (dict "context" $context "limit" 6) }}
+<div class="home-dashboard home-feed-dashboard">
+  {{ partial "dashboard-left-sidebar.html" (dict "context" $context) }}
 
   <section class="home-feed" aria-label="文章列表">
     {{ with $heading }}
@@ -12,17 +11,16 @@
         <h1>{{ . }}</h1>
       </header>
     {{ end }}
-    <div class="home-post-list">
-      {{ range $paginator.Pages }}
+    <div class="home-post-list" role="region" aria-label="按发布时间从新到旧排列的文章" tabindex="0">
+      {{ range $posts }}
         {{ partial "home-post-card.html" . }}
       {{ else }}
         <div class="empty-card card">暂时还没有文章。</div>
       {{ end }}
     </div>
-    {{ partial "home-pagination.html" $paginator }}
   </section>
 
-  <aside class="home-sidebar home-sidebar-right" aria-label="文章标签">
+  <aside class="home-sidebar home-tags-sidebar" aria-label="文章标签">
     {{ partial "tag-cloud-card.html" (dict "context" $context) }}
   </aside>
 </div>
