@@ -5,32 +5,18 @@ date: 2026-09-15
 lastmod: 2026-11-19
 description: "分析 Hotfix 的预留分支、Delegate 适配、Mono.Cecil 注入、IL2CPP 构建顺序与运行时补丁安装。"
 categories:
-  - "Lua/XLua/Xlua源码阅读 (2.1.16)"
+  - "Lua/XLua/XLua 2.1.16 源码阅读"
 tags:
   - Lua
   - XLua
   - Unity
   - Hotfix
 series:
-  - Xlua源码阅读 (2.1.16)
+  - XLua 2.1.16 源码阅读
 series_order: 6
-draft: true
+draft: false
 toc: true
 ---
-
-XLua 如何让一个已经编译的 C# 方法执行 Lua 补丁？本文把过程分成构建期和运行时：构建期预留可切换的 Delegate 分支，运行时将 Lua function 适配后写入入口，再由原方法分派到补丁。
-
-<details>
-<summary>Xlua源码阅读 (2.1.16) · 系列目录</summary>
-
-1. [从 LuaEnv 到类型延迟注册](/posts/xlua-initialization/)
-2. [Lua 如何调用 C#](/posts/xlua-lua-call-csharp/)
-3. [C# 如何调用 Lua](/posts/xlua-csharp-call-lua/)
-4. [对象映射与跨语言生命周期](/posts/xlua-object-lifecycle/)
-5. [值类型传递与运行时优化](/posts/xlua-value-types-and-performance/)
-6. [Hotfix 的构建期注入与运行时分派](/posts/xlua-hotfix/)
-
-</details>
 
 ## Hotfix 的本质 {#hotfix-principle}
 

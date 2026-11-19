@@ -5,31 +5,17 @@ date: 2026-09-15
 lastmod: 2026-11-19
 description: "沿 LuaEnv 的初始化过程，分析 Lua VM、ObjectTranslator、生成代码接入与 Wrap 延迟注册。"
 categories:
-  - "Lua/XLua/Xlua源码阅读 (2.1.16)"
+  - "Lua/XLua/XLua 2.1.16 源码阅读"
 tags:
   - Lua
   - XLua
   - Unity
 series:
-  - Xlua源码阅读 (2.1.16)
+  - XLua 2.1.16 源码阅读
 series_order: 1
-draft: true
+draft: false
 toc: true
 ---
-
-创建一个 `LuaEnv` 时，XLua 会建立哪些运行设施？Generate Code 的产物又如何接入这个 Lua VM？本文先沿初始化过程理解整体结构，再展开 `XLuaGenAutoRegister.cs` 的静态触发、逐环境登记和按类型延迟注册。
-
-<details>
-<summary>Xlua源码阅读 (2.1.16) · 系列目录</summary>
-
-1. [从 LuaEnv 到类型延迟注册](/posts/xlua-initialization/)
-2. [Lua 如何调用 C#](/posts/xlua-lua-call-csharp/)
-3. [C# 如何调用 Lua](/posts/xlua-csharp-call-lua/)
-4. [对象映射与跨语言生命周期](/posts/xlua-object-lifecycle/)
-5. [值类型传递与运行时优化](/posts/xlua-value-types-and-performance/)
-6. [Hotfix 的构建期注入与运行时分派](/posts/xlua-hotfix/)
-
-</details>
 
 ## XLua 的整体运行时结构 {#runtime-architecture}
 
@@ -73,15 +59,12 @@ Generate Code 为不同交互路径准备适配代码。先从各文件的职责
 `LuaEnv` 首先校验 C# 封装层与 Native XLua 插件的版本，并从 Native 层取得当前实现使用的 Registry 伪索引：
 
 ```csharp
-if (LuaAPI.xlua_get_lib_version()
-    != LIB_VERSION_EXPECT)
+if (LuaAPI.xlua_get_lib_version() != LIB_VERSION_EXPECT)
 {
-    throw new InvalidProgramException(
-        "wrong lib version");
+    throw new InvalidProgramException("wrong lib version");
 }
 
-LuaIndexes.LUA_REGISTRYINDEX =
-    LuaAPI.xlua_get_registry_index();
+LuaIndexes.LUA_REGISTRYINDEX = LuaAPI.xlua_get_registry_index();
 ```
 
 版本校验用于尽早发现 C# 源码和 `xlua.dll`、`.so` 或 `.a` 不匹配的问题；Registry 伪索引由 Native 层提供，是为了兼容不同 Lua/LuaJIT 实现。
@@ -158,9 +141,7 @@ local cacheRef = setmetatable({}, { __mode = "v" })
 translator.createFunctionMetatable(rawL);
 translator.OpenLib(rawL);
 
-ObjectTranslatorPool.Instance.Add(
-    rawL,
-    translator);
+ObjectTranslatorPool.Instance.Add(rawL, translator);
 ```
 
 `OpenLib` 向 Lua 侧提供 `xlua.import_type`、`xlua.load_assembly`、`xlua.cast` 等基础入口。`ObjectTranslatorPool` 则建立：
@@ -300,32 +281,20 @@ namespace XLua.CSObjectWrap
 {
     public class XLua_Gen_Initer_Register__
     {
-        static void wrapInit0(
-            LuaEnv luaEnv,
-            ObjectTranslator translator)
+        static void wrapInit0(LuaEnv luaEnv, ObjectTranslator translator)
         {
-            translator.DelayWrapLoader(
-                typeof(Game.Player),
-                GamePlayerWrap.__Register);
+            translator.DelayWrapLoader(typeof(Game.Player), GamePlayerWrap.__Register);
 
-            translator.DelayWrapLoader(
-                typeof(Game.Enemy),
-                GameEnemyWrap.__Register);
+            translator.DelayWrapLoader(typeof(Game.Enemy), GameEnemyWrap.__Register);
 
-            translator.DelayWrapLoader(
-                typeof(Game.PlayerState),
-                GamePlayerStateWrap.__Register);
+            translator.DelayWrapLoader(typeof(Game.PlayerState), GamePlayerStateWrap.__Register);
         }
 
-        static void Init(
-            LuaEnv luaEnv,
-            ObjectTranslator translator)
+        static void Init(LuaEnv luaEnv, ObjectTranslator translator)
         {
             wrapInit0(luaEnv, translator);
 
-            translator.AddInterfaceBridgeCreator(
-                typeof(IPlayerView),
-                IPlayerViewBridge.__Create);
+            translator.AddInterfaceBridgeCreator(typeof(IPlayerView), IPlayerViewBridge.__Create);
         }
 
         static XLua_Gen_Initer_Register__()
@@ -355,9 +324,7 @@ namespace XLua
 {
     public partial class ObjectTranslator
     {
-        static XLua.CSObjectWrap.XLua_Gen_Initer_Register__
-            s_gen_reg_dumb_obj =
-                new XLua.CSObjectWrap.XLua_Gen_Initer_Register__();
+        static XLua.CSObjectWrap.XLua_Gen_Initer_Register__ s_gen_reg_dumb_obj = new XLua.CSObjectWrap.XLua_Gen_Initer_Register__();
     }
 }
 ```
@@ -374,17 +341,13 @@ static XLua_Gen_Initer_Register__()
 `LuaEnv.AddIniter` 不会立即注册到某个 Lua State，而是把初始化函数加入一个静态列表：
 
 ```csharp
-private static List<
-    Action<LuaEnv, ObjectTranslator>
-> initers;
+private static List<Action<LuaEnv, ObjectTranslator>> initers;
 
-public static void AddIniter(
-    Action<LuaEnv, ObjectTranslator> initer)
+public static void AddIniter(Action<LuaEnv, ObjectTranslator> initer)
 {
     if (initers == null)
     {
-        initers = new List<
-            Action<LuaEnv, ObjectTranslator>>();
+        initers = new List<Action<LuaEnv, ObjectTranslator>>();
     }
 
     initers.Add(initer);
@@ -460,18 +423,13 @@ GamePlayerWrap.__Register(L);
 它只是保存类型与注册函数之间的映射：
 
 ```csharp
-translator.DelayWrapLoader(
-    typeof(Game.Player),
-    GamePlayerWrap.__Register);
+translator.DelayWrapLoader(typeof(Game.Player), GamePlayerWrap.__Register);
 ```
 
 `ObjectTranslator` 内部保存：
 
 ```csharp
-private readonly Dictionary<
-    Type,
-    Action<RealStatePtr>
-> delayWrap;
+private readonly Dictionary<Type, Action<RealStatePtr>> delayWrap;
 ```
 
 此时形成：
@@ -504,9 +462,7 @@ TryDelayWrapLoader(L, typeof(Player));
 其核心逻辑近似为：
 
 ```csharp
-public bool TryDelayWrapLoader(
-    RealStatePtr L,
-    Type type)
+public bool TryDelayWrapLoader(RealStatePtr L, Type type)
 {
     if (loaded_types.ContainsKey(type))
     {
@@ -576,9 +532,7 @@ PlayerWrap.__Register(L)
 枚举使用同一套延迟加载机制：
 
 ```csharp
-translator.DelayWrapLoader(
-    typeof(PlayerState),
-    PlayerStateWrap.__Register);
+translator.DelayWrapLoader(typeof(PlayerState), PlayerStateWrap.__Register);
 ```
 
 当 Lua 第一次访问：
@@ -636,8 +590,7 @@ LuaAPI.lua_pop(L, 1);
 ```csharp
 public class Player
 {
-    public static readonly Player Default =
-        new Player();
+    public static readonly Player Default = new Player();
 }
 ```
 
@@ -648,9 +601,7 @@ public class Player
 ```csharp
 if (top != LuaAPI.lua_gettop(L))
 {
-    throw new Exception(
-        "top change, before:" + top
-        + ", after:" + LuaAPI.lua_gettop(L));
+    throw new Exception("top change, before:" + top + ", after:" + LuaAPI.lua_gettop(L));
 }
 ```
 
@@ -667,18 +618,13 @@ Lua table → 指定 C# 接口对象
 因此总注册器直接建立接口类型与 Bridge 创建函数之间的映射：
 
 ```csharp
-translator.AddInterfaceBridgeCreator(
-    typeof(IPlayerView),
-    IPlayerViewBridge.__Create);
+translator.AddInterfaceBridgeCreator(typeof(IPlayerView), IPlayerViewBridge.__Create);
 ```
 
 `ObjectTranslator` 内部保存：
 
 ```csharp
-Dictionary<
-    Type,
-    Func<int, LuaEnv, LuaBase>
-> interfaceBridgeCreators;
+Dictionary<Type, Func<int, LuaEnv, LuaBase>> interfaceBridgeCreators;
 ```
 
 运行时转换链路是：
@@ -716,9 +662,7 @@ bridge.GetDelegateByType(delegateType);
 `WrapPusher.cs` 则有自己的初始化器：
 
 ```csharp
-static void Init(
-    LuaEnv luaEnv,
-    ObjectTranslator translator)
+static void Init(LuaEnv luaEnv, ObjectTranslator translator)
 {
     translator.RegisterPushAndGetAndUpdate<Vector3>(
         translator.PushUnityEngineVector3,
@@ -759,11 +703,9 @@ StaticLuaCallbacks.__tryArraySet
 用于快速访问 `Vector3[]`、`Quaternion[]` 等值类型数组。`XLuaGenAutoRegister.cs` 中生成的 `InternalGlobals` 静态初始化代码会把它们接入全局调用点：
 
 ```csharp
-genTryArrayGetPtr =
-    StaticLuaCallbacks.__tryArrayGet;
+genTryArrayGetPtr = StaticLuaCallbacks.__tryArrayGet;
 
-genTryArraySetPtr =
-    StaticLuaCallbacks.__tryArraySet;
+genTryArraySetPtr = StaticLuaCallbacks.__tryArraySet;
 ```
 
 数组访问时，XLua 先尝试这些生成回调：
@@ -798,8 +740,7 @@ Dictionary<Type, IEnumerable<MethodInfo>>
 ```csharp
 public static class PlayerExtensions
 {
-    public static void ResetState(
-        this Player player)
+    public static void ResetState(this Player player)
     {
     }
 }
@@ -815,17 +756,13 @@ Player
 生成代码近似为：
 
 ```csharp
-extensionMethodMap =
-    new Dictionary<
-        Type,
-        IEnumerable<MethodInfo>>
+extensionMethodMap = new Dictionary<Type, IEnumerable<MethodInfo>>
     {
         {
             typeof(Player),
             new List<MethodInfo>
             {
-                new ExtensionDelegate(
-                    PlayerExtensions.ResetState).Method
+                new ExtensionDelegate(PlayerExtensions.ResetState).Method
             }
         }
     };
@@ -857,9 +794,7 @@ static void wrapInit2(...)
 主入口只负责依次调用：
 
 ```csharp
-static void Init(
-    LuaEnv luaEnv,
-    ObjectTranslator translator)
+static void Init(LuaEnv luaEnv, ObjectTranslator translator)
 {
     wrapInit0(luaEnv, translator);
     wrapInit1(luaEnv, translator);

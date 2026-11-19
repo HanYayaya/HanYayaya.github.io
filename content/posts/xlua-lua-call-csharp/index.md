@@ -5,31 +5,17 @@ date: 2026-09-15
 lastmod: 2026-11-19
 description: "从 CS 类型访问入口追踪到生成 Wrap，分析类型元表、成员分派、枚举、Delegate 与反射回退。"
 categories:
-  - "Lua/XLua/Xlua源码阅读 (2.1.16)"
+  - "Lua/XLua/XLua 2.1.16 源码阅读"
 tags:
   - Lua
   - XLua
   - Unity
 series:
-  - Xlua源码阅读 (2.1.16)
+  - XLua 2.1.16 源码阅读
 series_order: 2
-draft: true
+draft: false
 toc: true
 ---
-
-一行 `go:SetActive(false)` 如何从 Lua 进入真实的 C# 方法？本文从 `CS` 表的类型解析开始，分析 Wrap 如何建立 class table 和实例 metatable，再追踪参数读取、直接调用与返回值压栈，并继续讨论枚举、C# Delegate 和未生成 Wrap 时的回退路径。
-
-<details>
-<summary>Xlua源码阅读 (2.1.16) · 系列目录</summary>
-
-1. [从 LuaEnv 到类型延迟注册](/posts/xlua-initialization/)
-2. [Lua 如何调用 C#](/posts/xlua-lua-call-csharp/)
-3. [C# 如何调用 Lua](/posts/xlua-csharp-call-lua/)
-4. [对象映射与跨语言生命周期](/posts/xlua-object-lifecycle/)
-5. [值类型传递与运行时优化](/posts/xlua-value-types-and-performance/)
-6. [Hotfix 的构建期注入与运行时分派](/posts/xlua-hotfix/)
-
-</details>
 
 Lua 调用 C# 可以分成两个阶段：
 

@@ -5,31 +5,17 @@ date: 2026-09-15
 lastmod: 2026-11-19
 description: "分析 GCOptimize、WrapPusher、PackUnpack 的值类型表示、Push/Get/Update，以及缓存和 Native 扩展优化。"
 categories:
-  - "Lua/XLua/Xlua源码阅读 (2.1.16)"
+  - "Lua/XLua/XLua 2.1.16 源码阅读"
 tags:
   - Lua
   - XLua
   - Unity
 series:
-  - Xlua源码阅读 (2.1.16)
+  - XLua 2.1.16 源码阅读
 series_order: 5
-draft: true
+draft: false
 toc: true
 ---
-
-高频传递 Vector3 等值类型时，XLua 如何减少装箱与托管堆分配？本文先分析 GCOptimize 路径的目标，再展开 WrapPusher 与 PackUnpack 的生成代码，最后讨论类型转换缓存、安全读取与 Native 边界调用的成本。
-
-<details>
-<summary>Xlua源码阅读 (2.1.16) · 系列目录</summary>
-
-1. [从 LuaEnv 到类型延迟注册](/posts/xlua-initialization/)
-2. [Lua 如何调用 C#](/posts/xlua-lua-call-csharp/)
-3. [C# 如何调用 Lua](/posts/xlua-csharp-call-lua/)
-4. [对象映射与跨语言生命周期](/posts/xlua-object-lifecycle/)
-5. [值类型传递与运行时优化](/posts/xlua-value-types-and-performance/)
-6. [Hotfix 的构建期注入与运行时分派](/posts/xlua-hotfix/)
-
-</details>
 
 ## 值类型与 GCOptimize {#gc-optimize}
 
@@ -119,9 +105,7 @@ Lua userdata 保存对象池索引
 `WrapPusher.cs` 则为具体类型生成强类型入口：
 
 ```csharp
-public void PushPosition(
-    RealStatePtr L,
-    Position value)
+public void PushPosition(RealStatePtr L, Position value)
 ```
 
 参数直接按 `Position` 传递，不需要先转换成 `object`，从入口处避免装箱。
@@ -131,11 +115,10 @@ public void PushPosition(
 生成器调用：
 
 ```csharp
-GenWrapPusher(
-    gcOptimizeList
-        .Concat(wraps.Where(type => type.IsEnum))
-        .Distinct(),
-    savePath);
+GenWrapPusher(gcOptimizeList
+                .Concat(wraps.Where(type => type.IsEnum))
+                .Distinct(),
+            savePath);
 ```
 
 因此 `WrapPusher.cs` 主要处理两类类型。
@@ -261,9 +244,7 @@ public partial class ObjectTranslator
             LuaEnv.AddIniter(Init);
         }
 
-        static void Init(
-            LuaEnv luaenv,
-            ObjectTranslator translator)
+        static void Init(LuaEnv luaenv, ObjectTranslator translator)
         {
             translator.RegisterPushAndGetAndUpdate<Position>(
                 translator.PushPosition,
@@ -303,28 +284,19 @@ custom_update_funcs
 ```csharp
 int Position_TypeID = -1;
 
-public void PushPosition(
-    RealStatePtr L,
-    Position value)
+public void PushPosition(RealStatePtr L, Position value)
 {
     if (Position_TypeID == -1)
     {
         bool isFirst;
-        Position_TypeID = getTypeId(
-            L,
-            typeof(Position),
-            out isFirst);
+        Position_TypeID = getTypeId(L, typeof(Position), out isFirst);
     }
 
-    IntPtr buffer = LuaAPI.xlua_pushstruct(
-        L,
-        12,
-        Position_TypeID);
+    IntPtr buffer = LuaAPI.xlua_pushstruct(L, 12, Position_TypeID);
 
     if (!CopyByValue.Pack(buffer, 0, value))
     {
-        throw new Exception(
-            "pack fail for Position, value=" + value);
+        throw new Exception("pack fail for Position, value=" + value);
     }
 }
 ```
@@ -334,10 +306,7 @@ Push 主要分为三步。
 第一步，通过 `getTypeId` 取得该类型注册在 Lua Registry 中的实例元表编号：
 
 ```csharp
-Position_TypeID = getTypeId(
-    L,
-    typeof(Position),
-    out isFirst);
+Position_TypeID = getTypeId(L, typeof(Position), out isFirst);
 ```
 
 值类型 userdata 会绑定同一个实例元表，因此它仍然可以使用普通 Wrap 注册的方法、属性和元方法。
@@ -345,10 +314,7 @@ Position_TypeID = getTypeId(
 第二步，通过 `xlua_pushstruct` 创建一个能够内联保存 struct 数据的 userdata：
 
 ```csharp
-IntPtr buffer = LuaAPI.xlua_pushstruct(
-    L,
-    12,
-    Position_TypeID);
+IntPtr buffer = LuaAPI.xlua_pushstruct(L, 12, Position_TypeID);
 ```
 
 C 层的数据结构为：
@@ -364,10 +330,7 @@ typedef struct {
 `xlua_pushstruct` 的核心逻辑是：
 
 ```c
-CSharpStruct *css =
-    lua_newuserdata(
-        L,
-        size + sizeof(int) + sizeof(unsigned int));
+CSharpStruct *css = lua_newuserdata( L, size + sizeof(int) + sizeof(unsigned int));
 
 css->fake_id = -1;
 css->len = size;
@@ -457,47 +420,31 @@ xlua_pushstruct
 生成的 Get 近似如下：
 
 ```csharp
-public void Get(
-    RealStatePtr L,
-    int index,
-    out Position value)
+public void Get(RealStatePtr L, int index, out Position value)
 {
     LuaTypes type = LuaAPI.lua_type(L, index);
 
     if (type == LuaTypes.LUA_TUSERDATA)
     {
-        if (LuaAPI.xlua_gettypeid(L, index)
-            != Position_TypeID)
+        if (LuaAPI.xlua_gettypeid(L, index) != Position_TypeID)
         {
-            throw new Exception(
-                "invalid userdata for Position");
+            throw new Exception("invalid userdata for Position");
         }
 
-        IntPtr buffer =
-            LuaAPI.lua_touserdata(L, index);
+        IntPtr buffer = LuaAPI.lua_touserdata(L, index);
 
-        if (!CopyByValue.UnPack(
-            buffer,
-            0,
-            out value))
+        if (!CopyByValue.UnPack(buffer, 0, out value))
         {
-            throw new Exception(
-                "unpack fail for Position");
+            throw new Exception("unpack fail for Position");
         }
     }
     else if (type == LuaTypes.LUA_TTABLE)
     {
-        CopyByValue.UnPack(
-            this,
-            L,
-            index,
-            out value);
+        CopyByValue.UnPack(this, L, index, out value);
     }
     else
     {
-        value = (Position)objectCasters
-            .GetCaster(typeof(Position))
-            (L, index, null);
+        value = (Position)objectCasters.GetCaster(typeof(Position))(L, index, null);
     }
 }
 ```
@@ -575,35 +522,25 @@ translator.UpdatePosition(L, 1, value);
 对应的 Update 近似如下：
 
 ```csharp
-public void UpdatePosition(
-    RealStatePtr L,
-    int index,
-    Position value)
+public void UpdatePosition(RealStatePtr L, int index, Position value)
 {
-    if (LuaAPI.lua_type(L, index)
-        == LuaTypes.LUA_TUSERDATA)
+    if (LuaAPI.lua_type(L, index) == LuaTypes.LUA_TUSERDATA)
     {
-        if (LuaAPI.xlua_gettypeid(L, index)
-            != Position_TypeID)
+        if (LuaAPI.xlua_gettypeid(L, index) != Position_TypeID)
         {
-            throw new Exception(
-                "invalid userdata for Position");
+            throw new Exception("invalid userdata for Position");
         }
 
-        IntPtr buffer =
-            LuaAPI.lua_touserdata(L, index);
+        IntPtr buffer = LuaAPI.lua_touserdata(L, index);
 
         if (!CopyByValue.Pack(buffer, 0, value))
         {
-            throw new Exception(
-                "pack fail for Position");
+            throw new Exception("pack fail for Position");
         }
     }
     else
     {
-        throw new Exception(
-            "try to update a data with lua type:"
-            + LuaAPI.lua_type(L, index));
+        throw new Exception("try to update a data with lua type:" + LuaAPI.lua_type(L, index));
     }
 }
 ```
@@ -678,8 +615,7 @@ Lua userdata = {x=10,y=2,z=3}
 只有再次从 Lua 取回值：
 
 ```csharp
-Position result =
-    luaEnv.Global.Get<Position>("position");
+Position result = luaEnv.Global.Get<Position>("position");
 ```
 
 或者经过明确的 `ref/out` 写回路径，Lua 中的数据才会重新复制给 C#。
@@ -723,11 +659,7 @@ internal static bool __tryArraySet(
     if (type == typeof(Position[]))
     {
         Position[] array = obj as Position[];
-        translator.Get(
-            L,
-            luaIndex,
-            out array[arrayIndex]);
-
+        translator.Get(L, luaIndex, out array[arrayIndex]);
         return true;
     }
 
@@ -765,10 +697,7 @@ translator.RegisterCaster<PlayerData>(translator.Get);
 生成的 Get 核心结构近似如下：
 
 ```csharp
-public void Get(
-    RealStatePtr L,
-    int index,
-    out PlayerData value)
+public void Get(RealStatePtr L, int index, out PlayerData value)
 {
     LuaTypes type = LuaAPI.lua_type(L, index);
 
@@ -942,10 +871,7 @@ public struct Position
 `PackUnpack.cs` 会在 `CopyByValue` 的 partial 类中生成：
 
 ```csharp
-public static bool Pack(
-    IntPtr buffer,
-    int offset,
-    Position value)
+public static bool Pack(IntPtr buffer, int offset, Position value)
 {
     return LuaAPI.xlua_pack_float3(
         buffer,
@@ -967,10 +893,7 @@ offset 8：z
 反序列化代码为：
 
 ```csharp
-public static bool UnPack(
-    IntPtr buffer,
-    int offset,
-    out Position value)
+public static bool UnPack(IntPtr buffer, int offset, out Position value)
 {
     value = default(Position);
 
@@ -1034,10 +957,7 @@ public struct PlayerData
 生成结果近似为：
 
 ```csharp
-public static bool Pack(
-    IntPtr buffer,
-    int offset,
-    PlayerData value)
+public static bool Pack(IntPtr buffer, int offset, PlayerData value)
 {
     if (!Pack(buffer, offset, value.id))
         return false;

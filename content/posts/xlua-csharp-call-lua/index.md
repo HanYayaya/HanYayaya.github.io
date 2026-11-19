@@ -5,31 +5,18 @@ date: 2026-09-15
 lastmod: 2026-11-19
 description: "分析 DoString、LoadString、LuaFunction 与 Registry 引用，追踪 DelegateBridge 和 InterfaceBridge 的生成及调用。"
 categories:
-  - "Lua/XLua/Xlua源码阅读 (2.1.16)"
+  - "Lua/XLua/XLua 2.1.16 源码阅读"
 tags:
   - Lua
   - XLua
   - Unity
 series:
-  - Xlua源码阅读 (2.1.16)
+  - XLua 2.1.16 源码阅读
 series_order: 3
-draft: true
+draft: false
 toc: true
 ---
 
-C# 可以执行 Lua Chunk、直接持有 LuaFunction，也可以通过 Delegate 或接口调用 Lua。本文把这些入口与对应的生成代码放在同一条分析路径中：先说明编译、持有和调用，再展开 DelegateBridge 与 InterfaceBridge 的强类型适配、参数转换和 AOT 要求。
-
-<details>
-<summary>Xlua源码阅读 (2.1.16) · 系列目录</summary>
-
-1. [从 LuaEnv 到类型延迟注册](/posts/xlua-initialization/)
-2. [Lua 如何调用 C#](/posts/xlua-lua-call-csharp/)
-3. [C# 如何调用 Lua](/posts/xlua-csharp-call-lua/)
-4. [对象映射与跨语言生命周期](/posts/xlua-object-lifecycle/)
-5. [值类型传递与运行时优化](/posts/xlua-value-types-and-performance/)
-6. [Hotfix 的构建期注入与运行时分派](/posts/xlua-hotfix/)
-
-</details>
 
 从 C# 侧进入 Lua，主要有四类入口：
 
@@ -263,8 +250,7 @@ LuaAPI.xlua_psettable(L, -3);
 实际项目中，更常见的调用方式是直接取得一个强类型 Delegate：
 
 ```csharp
-Action<int> callback =
-    luaEnv.Global.Get<Action<int>>("callback");
+Action<int> callback = luaEnv.Global.Get<Action<int>>("callback");
 
 callback(10);
 ```
@@ -288,8 +274,7 @@ DelegateBridge 创建真正的 Action<int>
 ```csharp
 public void __Gen_Delegate_Imp0(int p0)
 {
-    int errFunc =
-        LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+    int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
 
     translator.PushByType(L, p0);
     PCall(L, 1, 0, errFunc);
@@ -395,8 +380,7 @@ new DamageHandler(__Gen_Delegate_Imp0);
 生成器从 `CSharpCallLua` 中筛选 Delegate：
 
 ```csharp
-var delegateTypes = CSharpCallLua
-    .Where(type => typeof(Delegate).IsAssignableFrom(type));
+var delegateTypes = CSharpCallLua.Where(type => typeof(Delegate).IsAssignableFrom(type));
 ```
 
 例如：
@@ -732,8 +716,7 @@ lua_pcall
 当 C# 将一个 Lua table 读取成接口类型时：
 
 ```csharp
-IMoveable obj =
-    luaEnv.Global.Get<IMoveable>("player");
+IMoveable obj = luaEnv.Global.Get<IMoveable>("player");
 ```
 
 `ObjectTranslator` 会调用：

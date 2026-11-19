@@ -5,31 +5,17 @@ date: 2026-09-15
 lastmod: 2026-11-19
 description: "分析 ObjectPool、reverseMap、弱 userdata 缓存，以及 Lua 引用释放、Delegate 生命周期和跨 GC 引用环。"
 categories:
-  - "Lua/XLua/Xlua源码阅读 (2.1.16)"
+  - "Lua/XLua/XLua 2.1.16 源码阅读"
 tags:
   - Lua
   - XLua
   - Unity
 series:
-  - Xlua源码阅读 (2.1.16)
+  - XLua 2.1.16 源码阅读
 series_order: 4
-draft: true
+draft: false
 toc: true
 ---
-
-C# GC 与 Lua GC 各自管理一片堆，XLua 需要在两者之间维持对象身份和引用关系。本文沿普通 C# 对象进入 Lua、userdata 回收、Lua 对象被 C# 持有及释放的过程，分析对象映射和跨语言生命周期。
-
-<details>
-<summary>Xlua源码阅读 (2.1.16) · 系列目录</summary>
-
-1. [从 LuaEnv 到类型延迟注册](/posts/xlua-initialization/)
-2. [Lua 如何调用 C#](/posts/xlua-lua-call-csharp/)
-3. [C# 如何调用 Lua](/posts/xlua-csharp-call-lua/)
-4. [对象映射与跨语言生命周期](/posts/xlua-object-lifecycle/)
-5. [值类型传递与运行时优化](/posts/xlua-value-types-and-performance/)
-6. [Hotfix 的构建期注入与运行时分派](/posts/xlua-hotfix/)
-
-</details>
 
 C# GC 与 Lua GC 相互独立。XLua 除了完成值转换，还必须解决以下问题：
 

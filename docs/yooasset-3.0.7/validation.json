@@ -1,0 +1,75 @@
+{
+  "source_commit": "8cb910de899050d95b01644e7a3bd7a643f226c0",
+  "article_count": 8,
+  "category": "Unity/YooAsset/YooAsset 3.0.7 源码阅读",
+  "source_files_verified_against_commit": 40,
+  "draft_pages_rendered": 8,
+  "drafts_excluded_from_release": true,
+  "series_navigation_and_anchor_checks": "passed",
+  "hugo_builds": [
+    {
+      "drafts": true,
+      "command": [
+        "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+        "--source",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview",
+        "--destination",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview\\public-drafts",
+        "--cacheDir",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview\\cache-public-drafts",
+        "--noBuildLock",
+        "--printPathWarnings",
+        "-D"
+      ],
+      "exit_code": 0,
+      "output": "Start building sites … \nhugo v0.168.0-e27a6760c5547237f87d353aebe0580feadb20f4+extended windows/amd64 BuildDate=2026-10-13T16:42:50Z VendorInfo=gohugoio\n\n\n                  │ EN \n──────────────────┼────\n Pages            │ 41 \n Paginator pages  │  1 \n Non-page files   │  0 \n Static files     │  2 \n Processed images │  0 \n Aliases          │  5 \n Cleaned          │  0 \n\nTotal in 257 ms\n"
+    },
+    {
+      "drafts": false,
+      "command": [
+        "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+        "--source",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview",
+        "--destination",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview\\public-release",
+        "--cacheDir",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview\\cache-public-release",
+        "--noBuildLock",
+        "--printPathWarnings"
+      ],
+      "exit_code": 0,
+      "output": "Start building sites … \nhugo v0.168.0-e27a6760c5547237f87d353aebe0580feadb20f4+extended windows/amd64 BuildDate=2026-10-13T16:42:50Z VendorInfo=gohugoio\n\n\n                  │ EN \n──────────────────┼────\n Pages            │ 11 \n Paginator pages  │  0 \n Non-page files   │  0 \n Static files     │  2 \n Processed images │  0 \n Aliases          │  3 \n Cleaned          │  0 \n\nTotal in 46 ms\n"
+    }
+  ],
+  "unity_runtime_tests": "not run: documentation-only task",
+  "external_links": "GitHub source paths verified against local Git snapshot; external HTTP availability not tested",
+  "files": {
+    "content/posts/yooasset-307-filesystems/index.md": "190db34d25fc6677cd0867af1660bb996ff661487f2103ef5bb228e379ec946a",
+    "content/posts/yooasset-307-initialization/index.md": "3a1213f9a15fc1352fa12f81b6e87eb34b98a7cd30722d2d74dbc96d4f8d9580",
+    "content/posts/yooasset-307-lifetime/index.md": "01dc12f177be4d583a1eec8a124f0a9a8cb456c8b8474a6d8f14aa18dd31242f",
+    "content/posts/yooasset-307-loading/index.md": "99fecb1af84cf52710058e449c285c110bff175776fc2b01b111dc55092f0015",
+    "content/posts/yooasset-307-multiple-packages/index.md": "e36e3d119b23538b2514f6317392921585512d10e5262e41c441c3e09ada72c4",
+    "content/posts/yooasset-307-resource-model/index.md": "553d39154bc78124db727a0754c7b488b778a4606321bdfebf740ed6cf202d3b",
+    "content/posts/yooasset-307-sprite-atlas/index.md": "b715d387a961b4ae41f2980fd029330a0028ab80831eb3e833f00009b09a3ecc",
+    "content/posts/yooasset-307-version-and-delivery/index.md": "fda5044b3266145b29531d6a4a867cc6623f250b0c971006a1ecb2139e551da9"
+  },
+  "series_rename_validation": {
+    "command": [
+      "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+      "--source",
+      "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\rename\\site",
+      "--destination",
+      "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\rename\\public",
+      "--cacheDir",
+      "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\rename\\cache",
+      "--noBuildLock",
+      "--printPathWarnings",
+      "-D"
+    ],
+    "exit_code": 0,
+    "rendered_series": {
+      "YooAsset 3.0.7 源码阅读": 8,
+      "XLua 2.1.16 源码阅读": 6
+    }
+  }
+}
