@@ -44,14 +44,14 @@
   "unity_runtime_tests": "not run: documentation-only task",
   "external_links": "GitHub source paths verified against local Git snapshot; external HTTP availability not tested",
   "files": {
-    "content/posts/yooasset-307-filesystems/index.md": "190db34d25fc6677cd0867af1660bb996ff661487f2103ef5bb228e379ec946a",
-    "content/posts/yooasset-307-initialization/index.md": "3a1213f9a15fc1352fa12f81b6e87eb34b98a7cd30722d2d74dbc96d4f8d9580",
-    "content/posts/yooasset-307-lifetime/index.md": "01dc12f177be4d583a1eec8a124f0a9a8cb456c8b8474a6d8f14aa18dd31242f",
-    "content/posts/yooasset-307-loading/index.md": "99fecb1af84cf52710058e449c285c110bff175776fc2b01b111dc55092f0015",
-    "content/posts/yooasset-307-multiple-packages/index.md": "e36e3d119b23538b2514f6317392921585512d10e5262e41c441c3e09ada72c4",
-    "content/posts/yooasset-307-resource-model/index.md": "553d39154bc78124db727a0754c7b488b778a4606321bdfebf740ed6cf202d3b",
-    "content/posts/yooasset-307-sprite-atlas/index.md": "b715d387a961b4ae41f2980fd029330a0028ab80831eb3e833f00009b09a3ecc",
-    "content/posts/yooasset-307-version-and-delivery/index.md": "fda5044b3266145b29531d6a4a867cc6623f250b0c971006a1ecb2139e551da9"
+    "content/posts/yooasset-307-filesystems/index.md": "04b43493f97a33dbec6cfbf14105176f3153ebe8f85c5bbddced22fcb55fb1bf",
+    "content/posts/yooasset-307-initialization/index.md": "32cc7b4f9ce10c71e977fc0aad86cbc102e7d3070e1b3c056769a0206e688ad7",
+    "content/posts/yooasset-307-lifetime/index.md": "4d4f2a5f3d8f4ac11d50de56e8cbdca00861c5742c74627a12d082a7b11bd524",
+    "content/posts/yooasset-307-loading/index.md": "f446d1859ca8cb54f41ee5d01775c059e4199492ee3659e62317f0fe9c8301dc",
+    "content/posts/yooasset-307-multiple-packages/index.md": "1f594365ccd6da907af9c34de2ef1fe24c7a84ed296aed90c825850377cc1067",
+    "content/posts/yooasset-307-resource-model/index.md": "3d57db180c3daad6f99119dcc1ad802ce00536578dde394d3fa89b1bc7f33693",
+    "content/posts/yooasset-307-sprite-atlas/index.md": "e7a5ad04b3c9a11f72d1f3d717e7939adbb532b739f8a11beb93d3bcca31e438",
+    "content/posts/yooasset-307-version-and-delivery/index.md": "efdfb01cf33dd72bada288d0c42e322020a7b5f8d56789ffc9eacf74e17b4a1e"
   },
   "series_rename_validation": {
     "command": [
@@ -71,5 +71,23 @@
       "YooAsset 3.0.7 源码阅读": 8,
       "XLua 2.1.16 源码阅读": 6
     }
+  },
+  "opening_revision_validation": {
+    "title": "1. 整体架构与初始化流程",
+    "command": [
+      "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+      "--source",
+      "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\initialization-revision\\site",
+      "--destination",
+      "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\initialization-revision\\public",
+      "--cacheDir",
+      "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\initialization-revision\\cache",
+      "--noBuildLock",
+      "--printPathWarnings",
+      "-D"
+    ],
+    "exit_code": 0,
+    "anchors_and_chapter_links": "passed",
+    "previous_article_title": "passed"
   }
 }

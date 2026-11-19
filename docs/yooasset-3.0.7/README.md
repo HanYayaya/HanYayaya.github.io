@@ -4,7 +4,7 @@
 
 ## 系列文章
 
-1. [从全局入口到 Package 初始化](../../content/posts/yooasset-307-initialization/index.md)
+1. [整体架构与初始化流程](../../content/posts/yooasset-307-initialization/index.md)
 2. [文件系统、沙盒缓存与内置资源](../../content/posts/yooasset-307-filesystems/index.md)
 3. [资源版本、清单与首包交付](../../content/posts/yooasset-307-version-and-delivery/index.md)
 4. [ResourcePackage 与资源描述结构](../../content/posts/yooasset-307-resource-model/index.md)

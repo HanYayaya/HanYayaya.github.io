@@ -22,7 +22,7 @@ toc: true
 <details>
 <summary>YooAsset 3.0.7 源码阅读 · 系列目录</summary>
 
-1. [从全局入口到 Package 初始化](/posts/yooasset-307-initialization/)
+1. [整体架构与初始化流程](/posts/yooasset-307-initialization/)
 2. [文件系统、沙盒缓存与内置资源](/posts/yooasset-307-filesystems/)
 3. [资源版本、清单与首包交付](/posts/yooasset-307-version-and-delivery/)
 4. [ResourcePackage 与资源描述结构](/posts/yooasset-307-resource-model/)

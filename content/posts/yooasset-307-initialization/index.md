@@ -1,9 +1,9 @@
 ---
-title: "1. 从全局入口到 Package 初始化"
+title: "1. 整体架构与初始化流程"
 slug: yooasset-307-initialization
 date: 2026-11-19
 lastmod: 2026-11-19
-description: "梳理运行模式、核心对象、异步驱动，以及初始化和清单激活的边界。"
+description: "从 Editor、文件系统与 ResourceManager 的职责划分出发，沿全局初始化、Package 创建、运行模式选择和文件系统初始化阅读源码。"
 categories:
   - "Unity/YooAsset/YooAsset 3.0.7 源码阅读"
 tags:
@@ -17,80 +17,139 @@ draft: true
 toc: true
 ---
 
-调用 `LoadAssetAsync("Player")` 之前，框架需要先准备哪些东西？本文从全局初始化开始，将 Package、文件系统、资源清单和异步操作放到同一条启动链路中。
 
-<details>
-<summary>YooAsset 3.0.7 源码阅读 · 系列目录</summary>
 
-1. [从全局入口到 Package 初始化](/posts/yooasset-307-initialization/)
-2. [文件系统、沙盒缓存与内置资源](/posts/yooasset-307-filesystems/)
-3. [资源版本、清单与首包交付](/posts/yooasset-307-version-and-delivery/)
-4. [ResourcePackage 与资源描述结构](/posts/yooasset-307-resource-model/)
-5. [Provider、Handle 与 Bundle 加载复用](/posts/yooasset-307-loading/)
-6. [引用计数、实例与资源卸载](/posts/yooasset-307-lifetime/)
-7. [多 Package 与关卡资源管理](/posts/yooasset-307-multiple-packages/)
-8. [SpriteAtlas 的构建、加载与生命周期](/posts/yooasset-307-sprite-atlas/)
+## YooAsset初始化流程为
 
-</details>
+```text
+YooAssets.Initialize
+    → 建立全局驱动与异步操作系统
+YooAssets.CreatePackage
+    → 创建 Package，并注册其调度器
+ResourcePackage.InitializePackageAsync
+    → 根据运行模式创建 ResourceManager、FileSystemHost
+    → 创建并初始化配置的文件系统
+    → 返回 Package 初始化结果
+```
 
-> 版本基线：当前仓库包版本为 **3.0.7**，源码对照提交为 [`8cb910de8990`](https://github.com/tuyoogame/YooAsset/tree/8cb910de899050d95b01644e7a3bd7a643f226c0)。调用链与配置按此快照解释；未标注为完整脚本的代码块为源码摘录或使用片段。
+## 全局初始化 {#global-initialize}
 
-## 资源系统首先解决什么问题 {#overview}
-
-Unity 的 AssetBundle API 提供文件加载、对象加载和卸载能力。一个可交付的资源系统还需要知道：地址对应哪个文件、依赖如何准备、文件是否下载过、应该使用哪个版本，以及什么时候可以释放资源。
-
-可以按职责将 YooAsset 分成三部分：
-
-| 部分 | 核心问题 | 主要对象 |
-| --- | --- | --- |
-| 编辑器构建 | 资源如何组织为 Bundle，如何生成发布信息 | Collector、构建管线、BuildManifest |
-| 文件交付 | 目标文件在哪里，是否需要下载或解包 | FileSystemHost、IFileSystem、BundleCache |
-| 运行时加载 | 如何复用加载工作，如何管理引用 | ResourceManager、Provider、Handle |
-
-后续讨论中要始终区分四种状态：文件已经下载、Bundle 已加载、资源对象已加载、Prefab 已实例化。这四件事分别消耗不同资源，也有不同的生命周期。
-
-## 全局入口与 Package {#global-and-package}
-
-`YooAssets.Initialize()` 创建挂有 `YooAssetsDriver` 的 GameObject，设置 `DontDestroyOnLoad`，初始化 `AsyncOperationSystem`，并配置日志。相应编译条件下还会添加诊断组件。
-
-随后可以创建 Package：
+业务首先调用：
 
 ```csharp
 YooAssets.Initialize();
+```
+
+它进入 `YooAssets.Initialize(ILogger logger)`。下面摘录其中建立运行环境的代码，省略重复初始化检查和诊断组件分支：
+
+```csharp
+YooLogger.Current = logger;
+
+s_driver = new UnityEngine.GameObject($"[{nameof(YooAssets)}]");
+s_driver.AddComponent<YooAssetsDriver>();
+UnityEngine.Object.DontDestroyOnLoad(s_driver);
+
+AsyncOperationSystem.Initialize();
+s_isInitialized = true;
+```
+
+这里首先创建一个常驻的 GameObject，并挂上 `YooAssetsDriver`。它把 YooAsset 接入 Unity 的每帧更新，使后续异步操作能够持续推进：
+
+```text
+YooAssetsDriver.Update
+    → YooAssets.Update
+    → AsyncOperationSystem.Update
+    → 各调度器推进已登记的异步操作
+```
+
+后面遇到的 Package 初始化、文件系统初始化，都是由 Operation 表达的异步操作。它们可能需要跨帧等待，所以在创建具体 Package 之前，要先准备好统一的驱动和调度系统。这里的异步也不意味着所有工作都放到后台线程执行。
+
+到这一步，框架具备了运行异步操作的基础，但还没有创建任何具体 Package 的 ResourceManager 或文件系统。这些对象属于具体资源集合，需要在 Package 初始化时建立。
+
+## 创建 Package {#create-package}
+
+全局系统就绪后，创建一个 Package：
+
+```csharp
 var package = YooAssets.CreatePackage("DefaultPackage");
 ```
 
-`CreatePackage` 将对象登记到全局字典，并注册这个 Package 的异步调度器。此时尚未创建完整的文件系统和资源管理器。Package 名称是管理边界，不等于一个 AssetBundle 文件名，一个 Package 可以包含大量 Bundle。
+`CreatePackage` 检查全局初始化状态和同名 Package 后，执行以下核心逻辑：
 
-```text
-YooAssets
-├─ 全局驱动与异步系统
-└─ Package 字典
-   └─ DefaultPackage
-      ├─ ResourceManager
-      └─ FileSystemHost
-         ├─ 文件系统列表
-         └─ ActiveManifest
+```csharp
+ResourcePackage package = new ResourcePackage(packageName);
+s_packages.Add(packageName, package);
+AsyncOperationSystem.CreatePackageScheduler(packageName, packagePriority);
+return package;
 ```
 
-## 四种运行模式改变什么 {#play-modes}
+`ResourcePackage` 的构造函数此时只记录 `PackageName`。全局字典负责按名称查找它，对应的调度器则负责管理该 Package 后续提交的异步操作。
 
-运行模式主要选择文件系统组合。业务仍然通过 Package 的加载接口使用资源。
+Package 是资源管理的范围，一个 Package 可以包含很多 Bundle。后面创建的 ResourceManager 和 FileSystemHost 都属于这个 Package，加载清单也会针对这个 Package 进行。`DefaultPackage` 是这里使用的名称，并不会自动让它成为其他 Package 的父级。
 
-| 模式 | 默认资源来源 | 主要用途 |
+创建完成后，为什么还要单独调用初始化接口？因为仅凭 Package 名称，还无法知道运行环境应该使用编辑器资源、安装包资源，还是远端资源。接下来需要通过运行模式和参数，将资源来源配置进去。
+
+## 选择运行模式 {#play-modes}
+
+YooAsset 提供了四种常用运行模式：编辑器模拟、离线、联机和 Web。它们通过不同的初始化选项表达，最终影响 FileSystemHost 中配置哪些文件系统。ResourcePackage 仍然提供统一的业务入口。
+
+理解模式时，需要同时考虑两个问题：资源从哪里来，以及当前平台允许怎样访问这些资源。
+
+### 编辑器模拟模式：直接使用工程资源 {#editor-mode}
+
+`EditorSimulateModeOptions` 使用 `EditorFileSystemParameters`，默认对应 EditorFileSystem。它结合模拟构建生成的描述信息，在编辑器中通过 AssetDatabase 等接口访问工程资源，不需要为每次资源修改构建真实的 AssetBundle。
+
+这适合日常开发：修改 Prefab、UI 或配置后，可以较快验证业务效果，同时继续使用 Package 的寻址和加载接口。
+
+它模拟的是资源系统的使用流程。真实 Bundle 的文件读取、压缩、平台格式和构建依赖问题，仍需要使用实际构建产物验证。因此，模拟模式是开发阶段的便利，并不能覆盖真机资源交付的全部行为。
+
+### 离线运行模式：使用随应用交付的资源 {#offline-mode}
+
+`OfflinePlayModeOptions` 使用 `BuiltinFileSystemParameters`，默认对应 BuiltinFileSystem。资源在发布前完成构建，并随应用交付，运行时通过内置文件系统访问。
+
+这种模式适合全部所需资源已经包含在应用中的场景，默认组合不提供远端资源补齐能力。需要更新这部分资源时，通常通过应用更新重新交付。
+
+这里的“离线”描述资源交付方式。游戏即使需要登录服务器或联网战斗，也可以使用离线资源模式，只要资源本身已经随应用准备好。
+
+### 联机运行模式：组合内置资源与下载缓存 {#host-mode}
+
+`HostPlayModeOptions` 提供两个配置位置：
+
+```text
+BuiltinFileSystemParameters → 内置文件系统
+CacheFileSystemParameters   → 缓存文件系统
+```
+
+默认组合是 BuiltinFileSystem 与 SandboxFileSystem。前者管理安装包中的资源，后者管理可写目录中的下载缓存，并通过远端服务取得缺少的文件。
+
+这样，应用可以只携带启动所需的首包资源，其余内容通过网络交付；已经下载的文件也可以在后续启动时继续使用。它同样支持应用先携带较完整的资源，再通过远端发布更新内容。
+
+两个配置分别对应两种存储来源及其生命周期：安装包内的内容随应用交付，下载缓存可以在运行期间增加或清理。联机模式将它们接入同一个 Package，具体文件由谁提供，会在第二篇分析。
+
+### Web 运行模式：适配浏览器的资源访问方式 {#web-mode}
+
+`WebPlayModeOptions` 面向 WebGL 等 Web 运行环境，提供 `WebServerFileSystemParameters` 和 `WebNetworkFileSystemParameters`。默认实现分别为 WebServerFileSystem 和 WebNetworkFileSystem。
+
+WebServerFileSystem 对接随 Web 应用部署的资源集合；WebNetworkFileSystem 通过配置的远端服务取得网络资源。与原生平台相比，浏览器中的文件访问和缓存受 Web 环境约束，即使资源随应用一起部署，读取时也可能需要通过 URL 请求。
+
+因此，Web 模式不能简单理解为“把联机模式的下载地址换一下”。它使用适合 Web 环境的文件系统和网络缓存机制，不能直接照搬原生平台扫描沙盒目录、读取本地文件的流程。
+
+四种模式可以归纳为：
+
+| 模式 | 默认接入方式 | 主要使用场景 |
 | --- | --- | --- |
-| EditorSimulateMode | 编辑器工程资源、模拟构建信息 | 日常开发，无需每次构建真实 Bundle |
-| OfflinePlayMode | 内置文件系统 | 全部所需内容随应用交付 |
-| HostPlayMode | 内置文件系统与缓存文件系统 | 热更新、首包、按需下载 |
-| WebPlayMode | Web 服务器与 Web 网络文件系统，或平台适配 | 浏览器与相关 Web 运行环境 |
+| EditorSimulateMode | 编辑器文件系统 | 快速开发、使用工程资源 |
+| OfflinePlayMode | 内置文件系统 | 所需资源全部随应用交付 |
+| HostPlayMode | 内置文件系统 + 沙盒文件系统 | 首包、资源更新与后续下载 |
+| WebPlayMode | Web 服务器文件系统、Web 网络文件系统 | 浏览器环境中的资源访问 |
 
-联机、离线描述的是资源交付方式。连接战斗服务器的游戏同样可以使用离线资源模式。模拟模式可以验证地址和业务流程，但无法代替真实 Bundle 的平台、内存和依赖验证。
+3.0.7 还提供 `CustomPlayModeOptions`，允许直接配置文件系统参数列表。双文件系统入口会过滤空参数，因此上表描述的是常见默认组合，不表示每次都必须创建两套文件系统。
 
-当前实现还提供 `CustomPlayModeOptions`，允许业务配置文件系统列表。Web 平台的访问和缓存机制与原生文件目录不同，不能直接套用沙盒扫描规则。
+模式选择至此就落实为具体配置了。接下来以联机模式为例，看这些参数怎样变成真正的运行时对象。
 
-## Package 初始化的内部顺序 {#initialize-package}
+## Package 初始化 {#initialize-package}
 
-以默认联机配置为例，下面是初始化参数片段，`remoteService` 由业务提供：
+以下是初始化调用片段，假设 `package` 已创建，`remoteService` 是业务实现的远端资源地址服务：
 
 ```csharp
 var options = new HostPlayModeOptions
@@ -111,73 +170,86 @@ if (operation.Status != EOperationStatus.Succeeded)
 }
 ```
 
-`CreateDefaultSandboxFileSystemParameters` 只创建配置，尚未建立沙盒对象。真正的创建发生在初始化操作中：
+`CreateDefault...Parameters` 返回的是配置对象。到这里，文件系统实例还没有创建。
 
-```text
-InitializePackageOperation
-  SetPlayMode → CheckOptions → CreateCore → InitFileSystem
-                                 │              │
-                                 │              └─ InitializeFileSystemOperation
-                                 │                   → 创建文件系统实例
-                                 │                   → SetParameter / OnCreate
-                                 │                   → InitializeAsync
-                                 └─ 创建 ResourceManager、FileSystemHost
+`ResourcePackage.InitializePackageAsync` 检查参数和重复初始化状态后，创建初始化操作，并交给前面注册的 Package 调度器：
+
+```csharp
+_initializeOp = new InitializePackageOperation(this, options);
+AsyncOperationSystem.StartOperation(PackageName, _initializeOp);
+return _initializeOp;
 ```
 
-`InitializeFileSystemOperation` 按参数列表顺序初始化各文件系统。默认联机组合先初始化 Builtin，再初始化 Sandbox。文件系统内部准备路径、缓存索引、下载后端和调度器，具体过程见第二篇。
+这也解释了前面全局初始化和创建 Package 的必要性：初始化操作需要提交给调度器，再由全局驱动逐帧推进。业务中的 `yield return operation` 用于等待它完成。
 
-`ResourceManager` 同时接收 Bundle 加载并发上限、自动卸载等选项。此时只是建立运行设施，不会为清单里每个资源预先创建 Provider。
-
-## 初始化成功与清单就绪是两个状态 {#manifest-ready}
-
-在本版本中，`InitializePackageAsync` 不会自动完成“查询资源版本并激活目标清单”的业务流程。典型启动顺序是：
+进入 `InitializePackageOperation` 后，状态顺序如下：
 
 ```text
-初始化 Package
-    ↓
-查询或指定目标资源版本
-    ↓
-LoadPackageManifestAsync
-    ↓
-清单校验、解析、建立索引、设置 ActiveManifest
-    ↓
-按需要预下载资源
-    ↓
-加载启动场景或其他资源
+SetPlayMode → CheckOptions → CreateCore → InitFileSystem → Done
 ```
 
-`InitializeStatus` 描述初始化操作状态；`PackageValid` 会检查文件系统宿主及激活清单。两者表达的准备程度不同。加载资源需要有效的当前清单，因为文件缓存本身无法回答地址与依赖的关系。
+`SetPlayMode` 根据 options 的实际类型确定运行模式；`CheckOptions` 检查 Bundle 加载最大并发数必须大于零。随后在 `CreateCore` 中，创建属于当前 Package 的两个核心对象：
 
-## 谁在推进这些异步操作 {#operation-driver}
+```csharp
+string packageName = _package.PackageName;
+var resourceManager = new ResourceManager(packageName);
+var fileSystemHost = new FileSystemHost(packageName);
+resourceManager.Initialize(_options, fileSystemHost);
 
-驱动链路为：
+_fileSystemHost = fileSystemHost;
+_package.InternalInitialize(resourceManager, fileSystemHost);
+```
+
+`ResourceManager.Initialize` 接收加载并发、自动卸载等管理选项，并保存文件系统宿主接口。`InternalInitialize` 再将 ResourceManager 和 FileSystemHost 交给 Package 持有。
+
+开头提到的运行时两部分，由此在同一个 Package 下建立了联系：ResourceManager 负责后续加载和生命周期管理，FileSystemHost 统一管理资源文件的访问入口。但宿主此时还没有完成具体文件系统的初始化，所以下一步继续处理运行模式带来的配置。
+
+## 文件系统初始化 {#initialize-filesystems}
+
+联机模式在 `InitFileSystem` 阶段调用：
+
+```csharp
+_initializeFileSystemOp = _fileSystemHost.InitializeAsync(
+    initializeParameters.BuiltinFileSystemParameters,
+    initializeParameters.CacheFileSystemParameters);
+```
+
+其他模式也在这里分派，只是传入的参数不同。FileSystemHost 将参数整理成列表，交给 `InitializeFileSystemOperation` 顺序处理。
+
+对列表中的每一项，主要执行以下步骤：
 
 ```text
-YooAssetsDriver.Update
-    → YooAssets.Update
-    → AsyncOperationSystem.Update
-    → 各 AsyncOperationScheduler.Update
-    → Operation.UpdateOperation
+FileSystemParameters.CreateFileSystem
+    → 按配置类型创建 IFileSystem 实例
+    → SetParameter 注入参数
+    → OnCreate 设置 Package 与根目录等信息
+    ↓
+FileSystemHost.AddFileSystem
+    ↓
+文件系统.InitializeAsync
+    → 等待该文件系统完成准备
+    → 成功后继续下一项
 ```
 
-调度器管理待加入与运行中的操作，并考虑优先级、全局时间片预算。各具体 Operation 通过状态机调用子操作的启动、更新接口，再检查其状态。这里的异步主要表示操作可以跨帧推进；文件校验的后台任务、Unity 自身的异步请求和网络请求各自有独立执行机制。
+`CreateFileSystem` 通过配置保存的类型名称实例化文件系统。这使模式参数与具体实现分离：模式负责组织配置，配置负责创建实例，实例再负责自己的初始化工作。
 
-读取操作时可以固定追踪三个位置：`InternalStart()` 设置起始状态，`InternalUpdate()` 推进步骤，结果状态将成功或错误传播给外层。`yield return operation` 是等待接口，不负责替代全局驱动器执行操作。
+对于默认联机组合，先初始化 BuiltinFileSystem，再初始化 SandboxFileSystem。内置系统准备内置资源索引等访问设施，沙盒系统准备下载缓存索引等运行状态。Catalog 怎样读取、缓存目录怎样扫描、校验做到什么程度，属于各文件系统内部的实现，第二篇再沿这条入口向下分析。
 
-操作完成也不等于底层资源被卸载。一个 Provider 可以完成加载后继续被缓存、持有对象，直到引用与卸载策略允许销毁。异步操作生命周期和资源生命周期需要分别理解。
+外层 `InitializePackageOperation` 会等待整个文件系统初始化操作完成，并传播进度与错误。全部成功后，才将 Package 初始化标记为成功；其中某一步失败，外层也会返回失败，业务应检查 `Status` 和 `Error`。
 
-## 失败后重试哪个阶段 {#failure-boundaries}
+## 初始化结束时，系统处于什么状态 {#initialization-result}
 
-`ResourcePackage.InitializePackageAsync` 会检查重复初始化；初始化失败时，后续调用前的 `TryResetAfterFailure` 会销毁已建立的内部状态。业务仍需等待操作结束并检查错误。
+走到这里，最初的 Package 已经具有以下运行结构：
 
-清单获取失败与文件系统初始化失败属于不同阶段。文件系统已经初始化成功时，通常应针对清单流程重试，而不是再次初始化同一个已成功初始化的 Package。
+```text
+YooAssets
+├─ 全局驱动与异步操作系统
+└─ DefaultPackage
+   ├─ 对应的异步调度器（由异步操作系统管理）
+   ├─ ResourceManager
+   └─ FileSystemHost
+      ├─ BuiltinFileSystem
+      └─ SandboxFileSystem
+```
 
-覆盖安装的缓存策略也在文件系统初始化中执行：`ApplicationFootprint` 记录安装标记，变化后按 `InstallCleanupMode` 清理相关内容，再重建缓存索引。它与业务选择 v2、v3 资源版本并非同一个判断。
-
-## 源码阅读入口 {#source}
-
-- [YooAssets.cs](https://github.com/tuyoogame/YooAsset/blob/8cb910de899050d95b01644e7a3bd7a643f226c0/Assets/YooAsset/Runtime/YooAssets.cs)：全局初始化、Package 登记。
-- [InitializePackageOperation.cs](https://github.com/tuyoogame/YooAsset/blob/8cb910de899050d95b01644e7a3bd7a643f226c0/Assets/YooAsset/Runtime/ResourcePackage/Operations/InitializePackageOperation.cs)：创建核心对象与模式分派。
-- [InitializeFileSystemOperation.cs](https://github.com/tuyoogame/YooAsset/blob/8cb910de899050d95b01644e7a3bd7a643f226c0/Assets/YooAsset/Runtime/ResourcePackage/Operations/Internal/InitializeFileSystemOperation.cs)：逐个创建、初始化文件系统。
-- [AsyncOperationSystem.cs](https://github.com/tuyoogame/YooAsset/blob/8cb910de899050d95b01644e7a3bd7a643f226c0/Assets/YooAsset/Runtime/AsyncOperation/AsyncOperationSystem.cs) 与 [AsyncOperationScheduler.cs](https://github.com/tuyoogame/YooAsset/blob/8cb910de899050d95b01644e7a3bd7a643f226c0/Assets/YooAsset/Runtime/AsyncOperation/AsyncOperationScheduler.cs)：每帧调度。
-- [LoadPackageManifestOperation.cs](https://github.com/tuyoogame/YooAsset/blob/8cb910de899050d95b01644e7a3bd7a643f226c0/Assets/YooAsset/Runtime/ResourcePackage/Operations/LoadPackageManifestOperation.cs)：激活清单的独立操作。
+全局系统负责驱动，Package 确定管理范围，ResourceManager 接收管理策略，FileSystemHost 下的文件系统准备好资源访问能力。这就是本次初始化建立起来的运行环境。
