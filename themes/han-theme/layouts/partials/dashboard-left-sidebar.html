@@ -20,3 +20,6 @@
     </div>
   </section>
 </aside>
+
+{{ $sidebarState := resources.Get "js/sidebar-state.js" | minify }}
+<script>{{ $sidebarState.Content | safeJS }}</script>

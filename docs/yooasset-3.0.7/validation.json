@@ -1,57 +1,37 @@
 {
   "source_commit": "8cb910de899050d95b01644e7a3bd7a643f226c0",
-  "article_count": 8,
+  "article_count": 7,
   "category": "Unity/YooAsset/YooAsset 3.0.7 源码阅读",
   "source_files_verified_against_commit": 40,
-  "draft_pages_rendered": 8,
-  "drafts_excluded_from_release": true,
   "series_navigation_and_anchor_checks": "passed",
   "hugo_builds": [
-    {
-      "drafts": true,
-      "command": [
-        "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
-        "--source",
-        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview",
-        "--destination",
-        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview\\public-drafts",
-        "--cacheDir",
-        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview\\cache-public-drafts",
-        "--noBuildLock",
-        "--printPathWarnings",
-        "-D"
-      ],
-      "exit_code": 0,
-      "output": "Start building sites … \nhugo v0.168.0-e27a6760c5547237f87d353aebe0580feadb20f4+extended windows/amd64 BuildDate=2026-10-13T16:42:50Z VendorInfo=gohugoio\n\n\n                  │ EN \n──────────────────┼────\n Pages            │ 41 \n Paginator pages  │  1 \n Non-page files   │  0 \n Static files     │  2 \n Processed images │  0 \n Aliases          │  5 \n Cleaned          │  0 \n\nTotal in 257 ms\n"
-    },
     {
       "drafts": false,
       "command": [
         "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
         "--source",
-        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\finalize-seven\\site",
         "--destination",
-        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview\\public-release",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\finalize-seven\\public",
         "--cacheDir",
-        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\preview\\cache-public-release",
+        "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\finalize-seven\\cache",
         "--noBuildLock",
         "--printPathWarnings"
       ],
       "exit_code": 0,
-      "output": "Start building sites … \nhugo v0.168.0-e27a6760c5547237f87d353aebe0580feadb20f4+extended windows/amd64 BuildDate=2026-10-13T16:42:50Z VendorInfo=gohugoio\n\n\n                  │ EN \n──────────────────┼────\n Pages            │ 11 \n Paginator pages  │  0 \n Non-page files   │  0 \n Static files     │  2 \n Processed images │  0 \n Aliases          │  3 \n Cleaned          │  0 \n\nTotal in 46 ms\n"
+      "output": "Start building sites … \nhugo v0.168.0-e27a6760c5547237f87d353aebe0580feadb20f4+extended windows/amd64 BuildDate=2026-10-13T16:42:50Z VendorInfo=gohugoio\n\n\n                  │ EN \n──────────────────┼────\n Pages            │ 40 \n Paginator pages  │  1 \n Non-page files   │  0 \n Static files     │  2 \n Processed images │  0 \n Aliases          │  5 \n Cleaned          │  0 \n\nTotal in 276 ms\n"
     }
   ],
   "unity_runtime_tests": "not run: documentation-only task",
   "external_links": "GitHub source paths verified against local Git snapshot; external HTTP availability not tested",
   "files": {
-    "content/posts/yooasset-307-filesystems/index.md": "04b43493f97a33dbec6cfbf14105176f3153ebe8f85c5bbddced22fcb55fb1bf",
-    "content/posts/yooasset-307-initialization/index.md": "32cc7b4f9ce10c71e977fc0aad86cbc102e7d3070e1b3c056769a0206e688ad7",
-    "content/posts/yooasset-307-lifetime/index.md": "4d4f2a5f3d8f4ac11d50de56e8cbdca00861c5742c74627a12d082a7b11bd524",
-    "content/posts/yooasset-307-loading/index.md": "f446d1859ca8cb54f41ee5d01775c059e4199492ee3659e62317f0fe9c8301dc",
-    "content/posts/yooasset-307-multiple-packages/index.md": "1f594365ccd6da907af9c34de2ef1fe24c7a84ed296aed90c825850377cc1067",
-    "content/posts/yooasset-307-resource-model/index.md": "3d57db180c3daad6f99119dcc1ad802ce00536578dde394d3fa89b1bc7f33693",
-    "content/posts/yooasset-307-sprite-atlas/index.md": "e7a5ad04b3c9a11f72d1f3d717e7939adbb532b739f8a11beb93d3bcca31e438",
-    "content/posts/yooasset-307-version-and-delivery/index.md": "efdfb01cf33dd72bada288d0c42e322020a7b5f8d56789ffc9eacf74e17b4a1e"
+    "content/posts/yooasset-307-filesystems/index.md": "9e4d479d57d453c190a4d5143e4568cd1dae87741d52d2af61196ec5fbe405f7",
+    "content/posts/yooasset-307-initialization/index.md": "e1056763cd43fb8054834262a32f171d628b8c3621a09bd2e72752c454272ee5",
+    "content/posts/yooasset-307-lifetime/index.md": "d955c19ec00d852c1ef60f5ffb959ab97bf79eb4a6a3d9e50f86f3fdf6ef0a87",
+    "content/posts/yooasset-307-loading/index.md": "b5a56fe77752a0787256b346532828fbccfb96a6cc535a163dda13a52ce9b7c5",
+    "content/posts/yooasset-307-multiple-packages/index.md": "bab469ba8244a3fbde033048f6f3aaf6f77f976ab082e0c41137a5eae794ac9d",
+    "content/posts/yooasset-307-resource-model/index.md": "992f9d11c5dc992ba67a5e9a91793c72424c5f0c754b177b98dc5571a2a0b966",
+    "content/posts/yooasset-307-version-and-delivery/index.md": "9bdfbb709d354df0e3f007821e4990b72ee8d9fab02eeaf592ef2b6086238075"
   },
   "series_rename_validation": {
     "command": [
@@ -89,5 +69,359 @@
     "exit_code": 0,
     "anchors_and_chapter_links": "passed",
     "previous_article_title": "passed"
+  },
+  "manifest_chapter_validation": {
+    "date": "2026-11-20",
+    "source_files_verified": [
+      "Assets/YooAsset/Editor/BundleBuilder/BuildTasks/TaskCreateManifest.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/PackageManifest.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/PackageAsset.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/PackageBundle.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/LoadPackageManifestOperation.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/Internal/DeserializeManifestOperation.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/FileSystemHost.cs"
+    ],
+    "builds": [
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\manifest-revision\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\manifest-revision\\public",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\manifest-revision\\cache",
+          "--noBuildLock",
+          "--printPathWarnings",
+          "-D"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\manifest-revision\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\manifest-revision\\release",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\manifest-revision\\cache",
+          "--noBuildLock",
+          "--printPathWarnings"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "series_order_and_internal_links": "passed",
+    "drafts_excluded_from_release": true,
+    "unity_runtime_tests": "not run: documentation-only change"
+  },
+  "filesystems_chapter_review": {
+    "date": "2026-11-20",
+    "source_commit": "8cb910de899050d95b01644e7a3bd7a643f226c0",
+    "source_files_verified": [
+      "Assets/YooAsset/Runtime/ResourcePackage/FileSystemHost.cs",
+      "Assets/YooAsset/Runtime/FileSystem/Interfaces/IFileSystem.cs",
+      "Assets/YooAsset/Runtime/BundleCache/Services/BuiltinBundleCache/Operations/BBCInitializeOperation.cs",
+      "Assets/YooAsset/Runtime/BundleCache/Services/BuiltinBundleCache/BuiltinCatalogHelper.cs",
+      "Assets/YooAsset/Runtime/BundleCache/Services/SandboxBundleCache/Operations/SBCInitializeOperation.cs",
+      "Assets/YooAsset/Runtime/BundleCache/Services/SandboxBundleCache/Operations/Internal/SearchCacheFilesOperation.cs",
+      "Assets/YooAsset/Runtime/BundleCache/Services/SandboxBundleCache/Operations/Internal/VerifyCacheFilesTask.cs",
+      "Assets/YooAsset/Runtime/BundleCache/Services/SandboxBundleCache/Operations/SBCWriteCacheOperation.cs",
+      "Assets/YooAsset/Runtime/FileSystem/Policies/DefaultBundleUnpackPolicy.cs",
+      "Assets/YooAsset/Runtime/FileSystem/Services/SandboxFileSystem/Operations/SFSLoadPackageBundleOperation.cs",
+      "Assets/YooAsset/Runtime/FileSystem/Services/BuiltinFileSystem/Operations/BFSLoadPackageBundleOperation.cs"
+    ],
+    "builds": [
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\filesystems-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\filesystems-review\\public",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\filesystems-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings",
+          "-D"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\filesystems-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\filesystems-review\\release",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\filesystems-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "series_links_and_anchors": "passed",
+    "other_articles": "preserved",
+    "unity_runtime_tests": "not run: documentation-only change",
+    "review_notes": [
+      "Separated owner selection from cache availability.",
+      "Clarified cache initialization precedes active manifest.",
+      "Specified minimum info length and initialization verification levels.",
+      "Separated download write verification from startup verification.",
+      "Explained catalog registration and unpack cache ownership.",
+      "Documented separate data/info file commits and failure boundary."
+    ]
+  },
+  "delivery_chapter_review": {
+    "date": "2026-11-20",
+    "source_commit": "8cb910de899050d95b01644e7a3bd7a643f226c0",
+    "source_files_verified": [
+      "Assets/YooAsset/Editor/BundleBuilder/BuildParameters.cs",
+      "Assets/YooAsset/Editor/BundleBuilder/BuildTasks/TaskCreateManifest.cs",
+      "Assets/YooAsset/Editor/BundleBuilder/BuildTasks/TaskCopyBundledFiles.cs",
+      "Assets/YooAsset/Editor/BundleBuilder/BuildPipeline/ScriptableBuildPipeline/ScriptableBuildPipeline.cs",
+      "Assets/YooAsset/Editor/BundleBuilder/BuildTasks/TaskCreateCatalog.cs",
+      "Assets/YooAsset/Runtime/FileSystem/Services/SandboxFileSystem/Operations/Internal/RequestRemotePackageVersionOperation.cs",
+      "Assets/YooAsset/Runtime/FileSystem/Services/SandboxFileSystem/Operations/Internal/DownloadPackageManifestOperation.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/FileSystemHost.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/DownloaderOperation.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/ResourcePackage.cs"
+    ],
+    "builds": [
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\delivery-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\delivery-review\\public",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\delivery-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings",
+          "-D"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\delivery-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\delivery-review\\release",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\delivery-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "series_links_and_anchors": "passed",
+    "other_articles": "preserved",
+    "unity_runtime_tests": "not run: documentation-only change",
+    "review_notes": [
+      "Reorganized around resource build, builtin copy, deployment and client preparation.",
+      "Reduced duplication of manifest deserialization.",
+      "Verified copy options, tag propagation and catalog task order.",
+      "Separated business CDN routing from framework behavior.",
+      "Clarified immutable version content and rollback dependencies.",
+      "Verified untagged bundle inclusion and download/unpack distinction."
+    ]
+  },
+  "loading_chapter_review": {
+    "date": "2026-11-20",
+    "source_commit": "8cb910de899050d95b01644e7a3bd7a643f226c0",
+    "source_files_verified": [
+      "Assets/YooAsset/Runtime/ResourcePackage/ResourcePackage.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/AssetInfo.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/ResourceManager.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Providers/ProviderBase.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Providers/AssetProvider.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Operations/Internal/LoadBundleOperation.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/BundleInfo.cs",
+      "Assets/YooAsset/Runtime/BundleCache/Operations/Common/LoadLocalAssetBundleOperation.cs",
+      "Assets/YooAsset/Runtime/BundleHandle/Services/AssetBundleHandle/Operations/ABHLoadAssetOperation.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Handles/HandleBase.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Handles/AssetHandle.cs"
+    ],
+    "builds": [
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\loading-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\loading-review\\public",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\loading-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings",
+          "-D"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\loading-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\loading-review\\release",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\loading-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "series_links_and_anchors": "passed",
+    "other_articles": "preserved",
+    "unity_runtime_tests": "not run: documentation-only change",
+    "review_notes": [
+      "Organized around one LoadAssetAsync request.",
+      "Distinguished returning a handle from completing the load.",
+      "Verified Provider and Loader keys and constructor-time references.",
+      "Distinguished AssetHandle from internal IBundleHandle.",
+      "Traced LoadFromFileAsync and LoadAssetAsync normal paths.",
+      "Verified callback completion semantics and synchronous entry behavior.",
+      "Deferred destruction and unload rules to chapter 6."
+    ]
+  },
+  "lifetime_chapter_review": {
+    "date": "2026-11-20",
+    "source_commit": "8cb910de899050d95b01644e7a3bd7a643f226c0",
+    "source_files_verified": [
+      "Assets/YooAsset/Runtime/ResourceManager/Providers/ProviderBase.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Handles/HandleBase.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/InitializePackageOptions.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/ResourcePackage.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/ResourceManager.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Operations/Internal/LoadBundleOperation.cs",
+      "Assets/YooAsset/Runtime/BundleHandle/Services/AssetBundleHandle/AssetBundleHandle.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Operations/UnloadUnusedAssetsOperation.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Handles/AssetHandle.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Operations/InstantiateOperation.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Handles/SceneHandle.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Operations/UnloadSceneOperation.cs",
+      "Assets/YooAsset/Runtime/ResourceManager/Operations/UnloadAllAssetsOperation.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/DestroyPackageOperation.cs",
+      "Assets/YooAsset/Runtime/YooAssets.cs"
+    ],
+    "builds": [
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\lifetime-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\lifetime-review\\public",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\lifetime-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings",
+          "-D"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\lifetime-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\lifetime-review\\release",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\lifetime-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "series_links_and_anchors": "passed",
+    "other_articles": "preserved",
+    "unity_runtime_tests": "not run: documentation-only change",
+    "review_notes": [
+      "Traced release through both reference counts and both dictionary removals.",
+      "Distinguished automatic targeted cleanup from explicit package scans.",
+      "Verified loading-state guards, reverse dependencies and bounded scan completion.",
+      "Verified built-in instantiation helpers do not acquire per-instance handles.",
+      "Traced scene handle release through sceneUnloaded.",
+      "Distinguished unused cleanup, full unload, package destruction and disk cache cleanup."
+    ]
+  },
+  "multiple_packages_chapter_review": {
+    "date": "2026-11-20",
+    "source_commit": "8cb910de899050d95b01644e7a3bd7a643f226c0",
+    "source_files_verified": [
+      "Assets/YooAsset/Runtime/YooAssets.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/InitializePackageOperation.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/ResourcePackage.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/LoadPackageManifestOperation.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/DownloaderOptions.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/DownloaderOperation.cs",
+      "Assets/YooAsset/Editor/BundleBuilder/BuildTasks/TaskGetBuildMap.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/FileSystemHost.cs",
+      "Assets/YooAsset/Runtime/FileSystem/Services/SandboxFileSystem/SandboxFileSystem.cs",
+      "Assets/YooAsset/Runtime/ResourcePackage/Operations/DestroyPackageOperation.cs"
+    ],
+    "builds": [
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\packages-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\packages-review\\public",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\packages-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings",
+          "-D"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "E:\\Project\\HanYayaya.github.io\\.tools\\hugo\\0.168.0\\hugo.exe",
+          "--source",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\packages-review\\site",
+          "--destination",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\packages-review\\release",
+          "--cacheDir",
+          "E:\\Project\\YooAsset\\.tmp\\yooasset-series\\packages-review\\cache",
+          "--noBuildLock",
+          "--printPathWarnings"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "series_links_and_anchors": "passed",
+    "other_articles": "preserved",
+    "unity_runtime_tests": "not run: documentation-only change",
+    "review_notes": [
+      "Organized around package ownership and one level lifecycle.",
+      "Distinguished registration, initialization, manifest activation and download readiness.",
+      "Used current LoadPackageManifestAsync and StartDownload APIs.",
+      "Traced dependency scope through build collection and active manifest lookup.",
+      "Explained ownership of common-package handles by level sessions.",
+      "Separated package retention, destruction and disk cache persistence.",
+      "Kept release compatibility and CDN routing as a concluding extension."
+    ]
+  },
+  "release_pages_rendered": 7,
+  "all_articles_draft": false,
+  "series_finalization": {
+    "article_count": 7,
+    "removed_article": "content/posts/yooasset-307-sprite-atlas/index.md",
+    "reviewed_article_bodies": "preserved byte-for-byte",
+    "release_build_and_series_navigation": "passed",
+    "deployment": "not performed"
   }
 }

@@ -1,17 +1,16 @@
-# YooAsset 3.0.7 源码阅读：草稿与校验入口
+# YooAsset 3.0.7 源码阅读：文章与校验入口
 
-分类路径：`Unity/YooAsset/YooAsset 3.0.7 源码阅读`。按现有 xLua 系列格式组织八篇草稿，使用相同的分类树、series、series_order、折叠目录及主题页脚导航。所有文章为 `draft: true`，本轮不提交、不推送、不发布。
+分类路径：`Unity/YooAsset/YooAsset 3.0.7 源码阅读`。系列共七篇文章，使用分类树、series、series_order 及主题页脚导航。所有文章已设为 `draft: false`，会纳入常规 Hugo 构建；本次仅更新本地文件，未提交、推送或部署。
 
 ## 系列文章
 
 1. [整体架构与初始化流程](../../content/posts/yooasset-307-initialization/index.md)
-2. [文件系统、沙盒缓存与内置资源](../../content/posts/yooasset-307-filesystems/index.md)
-3. [资源版本、清单与首包交付](../../content/posts/yooasset-307-version-and-delivery/index.md)
-4. [ResourcePackage 与资源描述结构](../../content/posts/yooasset-307-resource-model/index.md)
+2. [资源清单与资源描述结构](../../content/posts/yooasset-307-resource-model/index.md)
+3. [文件系统、沙盒缓存与内置资源](../../content/posts/yooasset-307-filesystems/index.md)
+4. [资源版本、清单与首包交付](../../content/posts/yooasset-307-version-and-delivery/index.md)
 5. [Provider、Handle 与 Bundle 加载复用](../../content/posts/yooasset-307-loading/index.md)
 6. [引用计数、实例与资源卸载](../../content/posts/yooasset-307-lifetime/index.md)
 7. [多 Package 与关卡资源管理](../../content/posts/yooasset-307-multiple-packages/index.md)
-8. [SpriteAtlas 的构建、加载与生命周期](../../content/posts/yooasset-307-sprite-atlas/index.md)
 
 ## 来源与范围
 
@@ -30,7 +29,6 @@
 - .version 表达发布选择，不保证最大版本；本地文件存在仅表示已有目标缓存。
 - 首包是完整构建结果的副本子集，CDN 发布可以保留全部 Bundle。
 - Handle 释放、Provider 销毁、Loader 移除、磁盘缓存淘汰分别解释。
-- Atlas 章节区分源码已证实行为、Unity API 使用语义和待进行的真实构建实验。
 
 ## 后续可扩展主题
 
